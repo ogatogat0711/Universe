@@ -13,4 +13,17 @@ public class CameraManager : MonoBehaviour
     {
         
     }
+    
+    public static void ChangeCamera(Camera oldCamera, Camera newCamera)
+    {
+        if (oldCamera != null)
+        {
+            oldCamera.gameObject.SetActive(false);
+        }
+        
+        if (newCamera != null)
+        {
+            newCamera.gameObject.SetActive(true);
+        }
+    }
 }
