@@ -24,9 +24,9 @@ public class DrawLine : MonoBehaviour
             return;
         }
         
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && upperCamera.enabled)
         {
-            // 左クリックが押されている間、描画を開始
+            // 左クリックが押されている間、描画を開始.ただし,上方カメラの時のみ
             IsDrawing = true;
             _positionCount= 0; // 点の数をリセット
             lineRenderer.positionCount = _positionCount;

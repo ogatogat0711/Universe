@@ -4,6 +4,7 @@ using UnityEngine.Serialization;
 public class CelestialBody : MonoBehaviour
 {
     public bool isSpinOrbital;//公転するかのフラグ
+    public bool wasSetSpinOrbital;//公転が設定されたかのフラグ
     public GameObject orbitalCentralObject;//公転中心
     public float orbitalRadius = 15f;//公転半径
     public float orbitalCycle = 27f;//公転周期
