@@ -7,28 +7,33 @@ public class Probe : MonoBehaviour
     private Vector3 _velocity;
     private float _horizontal;
     private float _vertical;
-    private Camera _camera;
+    public Camera followingCamera;
     public GameObject collisionTarget;
+    public bool canMove;//移動可能かどうかのフラグ. UIボタンで制御
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _camera = Camera.main;
     }
 
     // Update is called once per frame
     void Update()
     {
-        _horizontal = Input.GetAxis("Horizontal");
-        _vertical = Input.GetAxis("Vertical");
+        if (canMove)
+        {
+            _horizontal = Input.GetAxis("Horizontal");
+            _vertical = Input.GetAxis("Vertical");
+        }
     }
 
     void FixedUpdate()
     {
-        Vector3 cameraDirection= Vector3.Scale(_camera.transform.forward, new Vector3(1, 0, 1)).normalized;//カメラの見ている方向からXZ平面の単位ベクトルを取得
-        Vector3 moveDirection = cameraDirection * _vertical + _camera.transform.right * _horizontal;//キー入力から移動方向を決定
-        _rigidbody.linearVelocity = moveDirection * speed;
-        
+        if (canMove)
+        {
+            Vector3 cameraDirection= Vector3.Scale(followingCamera.transform.forward, new Vector3(1, 0, 1)).normalized;//カメラの見ている方向からXZ平面の単位ベクトルを取得
+            Vector3 moveDirection = cameraDirection * _vertical + followingCamera.transform.right * _horizontal;//キー入力から移動方向を決定
+            _rigidbody.linearVelocity = moveDirection * speed;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)

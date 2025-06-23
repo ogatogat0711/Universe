@@ -5,7 +5,7 @@ public class CameraController : MonoBehaviour
     public Probe targetProbe;//追従対象(Probe)
     private Vector3 _targetPosition;//対象の座標
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void OnEnable()
     {
         float distance = 5f;//カメラと対象の距離
         _targetPosition = targetProbe.transform.position;

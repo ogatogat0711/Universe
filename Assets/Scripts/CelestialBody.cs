@@ -20,7 +20,7 @@ public class CelestialBody : MonoBehaviour
     private Rigidbody _gravitationTarget;//作用先
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         _orbitalAngle = Mathf.Deg2Rad * 90f; //公転角度の初期値を90度に設定（ラジアンに変換）
         _spinAngle = Mathf.Deg2Rad * 90f;//自転角度の初期値を90度に設定（ラジアンに変換）
@@ -32,9 +32,6 @@ public class CelestialBody : MonoBehaviour
             
             Vector3 orbitalCentralPos = orbitalCentralObject.transform.position;
             transform.position = orbitalCentralPos + new Vector3(x, 0, z);//該当天体の初期値
-            
-            Debug.Log("x:"+x);
-            Debug.Log("z:"+z);
         }
 
         _gravitationTarget = gravitationTargetObject.GetComponent<Rigidbody>();

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 public class DrawLine : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class DrawLine : MonoBehaviour
 
     private int _positionCount = 0;//点の数
     private float _interval = 1f; // 点の間隔
-    private bool _isDrawing = false; // 描画中かどうか
+    public static bool IsDrawing; // 描画中かどうか
 
     // Update is called once per frame
     void Update()
@@ -18,7 +19,7 @@ public class DrawLine : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                _isDrawing = false;
+                IsDrawing = false;
             }
             return;
         }
@@ -26,17 +27,17 @@ public class DrawLine : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             // 左クリックが押されている間、描画を開始
-            _isDrawing = true;
+            IsDrawing = true;
             _positionCount= 0; // 点の数をリセット
             lineRenderer.positionCount = _positionCount;
         }
         else if (Input.GetMouseButtonUp(0))
         {
             // 左クリックが離されたら描画を終了
-            _isDrawing = false;
+            IsDrawing = false;
         }
 
-        if (_isDrawing)
+        if (IsDrawing)
         {
             // 描画中の場合、マウスの位置を取得して点を追加
             Vector3 mousePosition = Input.mousePosition;
