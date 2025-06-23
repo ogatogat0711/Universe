@@ -5,7 +5,7 @@ public class MoveAlongLine : MonoBehaviour
 {
     public LineRenderer drawLine;
     public float moveSpeed = 5f;
-    private float _transferringDistance = 0.2f;//次のインデックスに進む基準の距離
+    private float _transferringDistance = 0.5f;//次のインデックスに進む基準の距離
     public float maxDistance = 3f;//曲線から離れたとみなす最大距離
     public bool canAutoMove;//移動可能かどうかのフラグ.
     public bool isMoving;//移動中かどうかのフラグ.UIボタンで制御
@@ -34,12 +34,12 @@ public class MoveAlongLine : MonoBehaviour
             Vector3 direction = (target - transform.position).normalized;//向かう方向
             
             _rigidbody.AddForce(direction * moveSpeed);
-            _probe.fuel -= _probe.fuelConsumptionRatioOfAutoMove;
 
             if (Vector3.Distance(transform.position, target) < _transferringDistance)
             {
                 //次のインデックスに移動
                 currentIndex++;
+                _probe.fuel -= _probe.fuelConsumptionRatioOfAutoMove;//燃料を消費
                 if (currentIndex >= drawLine.positionCount - 1)
                 {
                     isMoving = false;//最後のインデックスまで行ったので終了
