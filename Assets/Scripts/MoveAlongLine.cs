@@ -11,11 +11,13 @@ public class MoveAlongLine : MonoBehaviour
     public bool isMoving;//移動中かどうかのフラグ.UIボタンで制御
 
     public int currentIndex;
+    private Probe _probe;
     private Rigidbody _rigidbody;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _rigidbody = GetComponent<Rigidbody>();
+        _probe = GetComponent<Probe>();
+        _rigidbody = _probe.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -32,6 +34,7 @@ public class MoveAlongLine : MonoBehaviour
             Vector3 direction = (target - transform.position).normalized;//向かう方向
             
             _rigidbody.AddForce(direction * moveSpeed);
+            _probe.fuel -= _probe.fuelConsumptionRatioOfAutoMove;
 
             if (Vector3.Distance(transform.position, target) < _transferringDistance)
             {

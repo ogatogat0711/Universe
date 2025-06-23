@@ -21,8 +21,8 @@ public class CameraController : MonoBehaviour
         transform.position += targetProbe.transform.position - _targetPosition;
         _targetPosition = targetProbe.transform.position;
         //マウス移動量
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
+        float mouseX = Input.GetAxis("Mouse X") * 0.5f;
+        float mouseY = Input.GetAxis("Mouse Y") * 0.5f;
         //target中心に回転する
         transform.RotateAround(_targetPosition, Vector3.up, mouseX * Time.deltaTime * 200f);
         //カメラの垂直移動

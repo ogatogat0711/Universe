@@ -534,7 +534,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &1163024171
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1573,6 +1573,10 @@ MonoBehaviour:
   followingCamera: {fileID: 1163024172}
   collisionTarget: {fileID: 2076196308}
   canMove: 0
+  fuel: 0
+  maxFuel: 3000
+  fuelConsumptionRatioOfManipulation: 3
+  fuelConsumptionRatioOfAutoMove: 1
 --- !u!54 &2039559824
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ public class GameManager : MonoBehaviour
     public Button startButton; // UIボタン
     private MoveAlongLine _mover;
     private bool _didStartOnce;//一回スタートしたかを管理するフラグ
+    private bool _isPlaying;// ゲームがプレイ中かどうかのフラグ
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -29,6 +31,7 @@ public class GameManager : MonoBehaviour
         probe.canMove = false;//最初は移動を無効化
         _mover = probe.GetComponent<MoveAlongLine>();
         _didStartOnce = false;
+        _isPlaying = true;
     }
 
     // Update is called once per frame
@@ -37,6 +40,12 @@ public class GameManager : MonoBehaviour
         if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && !_didStartOnce && !DrawLine.IsDrawing)
         {
             startButton.interactable = true;// UIボタンを有効化
+        }
+
+        if (probe.fuel <= 0 && _isPlaying)//燃料が0以下になったらゲームオーバー
+        {
+            _isPlaying = false;// ゲームプレイ中フラグをfalseにする
+            GameOver();// ゲームオーバー処理を呼び出す
         }
     }
     
@@ -63,6 +72,12 @@ public class GameManager : MonoBehaviour
         CameraManager.ChangeCamera(upperCamera, followingCamera);// 上方カメラから追従カメラに切り替え
         upperCamera.enabled = false;// 上方カメラを無効化
         probe.canMove = true;// Probeの移動を有効化
+    }
+
+    private void GameOver()
+    {
+        Time.timeScale = 0;
+        Debug.Log("Game Over");
     }
 
 }
