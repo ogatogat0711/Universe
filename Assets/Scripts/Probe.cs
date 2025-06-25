@@ -43,7 +43,7 @@ public class Probe : MonoBehaviour
             Vector3 moveDirection = cameraDirection * _vertical + followingCamera.transform.right * _horizontal;//キー入力から移動方向を決定
             _rigidbody.linearVelocity = moveDirection * speed;
             fuel -= _fuelConsumption;
-            Debug.Log(fuel);
+            //Debug.Log(fuel);
         }
     }
 

@@ -16,6 +16,10 @@ public class GameManager : MonoBehaviour
     private bool _didStartOnce;//一回スタートしたかを管理するフラグ
     private bool _isPlaying;// ゲームがプレイ中かどうかのフラグ
     public Image fuelGauge;
+    public TMP_Text timerText;// タイマー表示用のテキスト
+    private int _timerMinutes; // タイマーの分
+    private float _timerSeconds;// タイマーの秒
+    private float _formerSeconds;// 前の秒数を保持する変数
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -36,6 +40,12 @@ public class GameManager : MonoBehaviour
         _mover = probe.GetComponent<MoveAlongLine>();
         _didStartOnce = false;
         _isPlaying = true;
+        
+        _timerMinutes = 0; // タイマーの初期値
+        _timerSeconds = 0f;
+        _formerSeconds = 0f; // 前の秒数を初期化
+        
+        timerText.text = "00:00";
     }
 
     // Update is called once per frame
@@ -45,11 +55,20 @@ public class GameManager : MonoBehaviour
         {
             startButton.interactable = true;// UIボタンを有効化
         }
+        else
+        {
+            startButton.interactable = false;
+        }
 
         if (probe.fuel > 0 && _isPlaying)
         {
             fuelText.text = probe.fuel.ToString();// 燃料を表示
             fuelGauge.fillAmount = (float)probe.fuel / probe.maxFuel; // 燃料ゲージの更新
+        }
+
+        if (followingCamera.enabled)
+        {
+            UpdateTimer();
         }
 
         if (probe.fuel <= 0 && _isPlaying)//燃料が0以下になったらゲームオーバー
@@ -107,6 +126,23 @@ public class GameManager : MonoBehaviour
         {
             newCamera.gameObject.SetActive(true);
         }
+    }
+
+    private void UpdateTimer()
+    {
+        _timerSeconds += Time.deltaTime;
+
+        if (_timerSeconds >= 60f)// 60秒を超えたら分を加算
+        {
+            _timerMinutes++;
+            _timerSeconds -= 60f;
+        }
+        // 秒数が異なったときのみタイマーの表示を更新
+        if ((int)_timerSeconds != (int)_formerSeconds)
+        {
+            timerText.text = _timerMinutes.ToString("00") + ":" + ((int)_timerSeconds).ToString("00");
+        }
+        _formerSeconds = _timerSeconds; // 前の秒数を更新
     }
 
 }
