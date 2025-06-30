@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text fuelText; // 燃料表示用のテキスト
     private MoveAlongLine _mover;
     public DrawLine draw;
+    private bool _wasManipulating;//前のフレームで操作していたかどうかを管理するフラグ
     private bool _didStartOnce;//一回スタートしたかを管理するフラグ
     private bool _didDrawOnce;//一回描画したかを管理するフラグ
     private bool _isPlaying;// ゲームがプレイ中かどうかのフラグ
@@ -47,6 +48,7 @@ public class GameManager : MonoBehaviour
         _didStartOnce = false;
         _didDrawOnce = false;
         _isPlaying = true;
+        _wasManipulating = false;
         
         _timerMinutes = 0; // タイマーの初期値
         _timerSeconds = 0f;
@@ -83,12 +85,25 @@ public class GameManager : MonoBehaviour
         {
             startButton.interactable = false;
 
-            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.IsDrawing && !_didDrawOnce)
+            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.IsDrawing && _didDrawOnce)
             {
                 navigationForUpper.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n"
                                                 + "もう少し探査機の近傍から描いてみてください！");
             }
         }
+
+        if (_mover.isMoving)
+        { //自動航行中
+            navigationForFollowing.ShowMessage("自動航行中です！\n"
+                                               + "WASDキーで手動操縦に切り替えることもできます！\n");
+        }
+        
+        if (probe.isManipulating && !_wasManipulating)
+        { //手動操作中
+            navigationForFollowing.ShowMessage("手動操作中です！\n"
+                                               + "消費燃料にご注意ください！\n");
+        }
+        _wasManipulating = probe.isManipulating;
 
         if (probe.fuel > 0 && _isPlaying)
         {

@@ -13,11 +13,11 @@ public class Navigation : MonoBehaviour
     
     public void ShowMessage(string text)
     {
-        if (currentText == text) return;
+        if (currentText == text) return;// 既に表示されているテキストと同じ場合は何もしない
         
         if (_coroutine != null)
         {
-            StopCoroutine(_coroutine); // 既存のコルーチンを停止
+            StopCoroutine(_coroutine);
         }
         _coroutine = StartCoroutine(DisplayNavigationText(text));
     }

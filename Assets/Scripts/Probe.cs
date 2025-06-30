@@ -11,6 +11,7 @@ public class Probe : MonoBehaviour
     public Camera followingCamera;
     public GameObject collisionTarget;
     public bool canMove;//移動可能かどうかのフラグ. UIボタンで制御
+    public bool isManipulating; // 操作中かどうかのフラグ
     public int fuel; // 燃料
     public int maxFuel = 100;// 最大燃料
     public int fuelConsumptionRatioOfManipulation = 3; // 操作時の燃料消費率
@@ -21,6 +22,7 @@ public class Probe : MonoBehaviour
     {
         fuel = maxFuel;
         _rigidbody = GetComponent<Rigidbody>();
+        isManipulating = false;
     }
 
     // Update is called once per frame
@@ -30,6 +32,16 @@ public class Probe : MonoBehaviour
         {
             _horizontal = Input.GetAxis("Horizontal");
             _vertical = Input.GetAxis("Vertical");
+            
+            if(_horizontal != 0 || _vertical != 0)
+            {
+                isManipulating = true; // 操作中ならフラグを立てる
+            }
+            else
+            {
+                isManipulating = false;
+            }
+
             _fuelConsumption = Mathf.RoundToInt(Mathf.Abs(_horizontal) + Mathf.Abs(_vertical));
             _fuelConsumption *= fuelConsumptionRatioOfManipulation; // 燃料消費量を計算
         }
@@ -54,10 +66,5 @@ public class Probe : MonoBehaviour
             Debug.Log("Hit");
             Time.timeScale = 0f;
         }
-    }
-
-    public float GetDistanceToTheTarget()
-    {
-        return Vector3.Distance(transform.position, collisionTarget.transform.position);
     }
 }

@@ -1733,7 +1733,7 @@ MonoBehaviour:
   isSpinItself: 0
   simulationSpeed: 0.01
   isGravitation: 1
-  gravitationCoefficient: 10000
+  gravitationCoefficient: 3000
   gravitationTargetObject: {fileID: 2039559822}
 --- !u!1 &1559778863
 GameObject:
@@ -2485,6 +2485,7 @@ MonoBehaviour:
   followingCamera: {fileID: 1163024172}
   collisionTarget: {fileID: 2076196308}
   canMove: 0
+  isManipulating: 0
   fuel: 0
   maxFuel: 2000
   fuelConsumptionRatioOfManipulation: 10
@@ -2622,6 +2623,7 @@ MonoBehaviour:
   maxDistance: 3
   canAutoMove: 0
   isMoving: 0
+  wasFarAway: 0
   currentIndex: 0
   reenableAutoMoveTime: 3
 --- !u!1 &2076196308

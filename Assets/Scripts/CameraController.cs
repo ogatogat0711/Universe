@@ -18,14 +18,16 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!this.enabled) return;// カメラが無効な場合は何もしない
+        
         transform.position += targetProbe.transform.position - _targetPosition;
         _targetPosition = targetProbe.transform.position;
         //マウス移動量
         float mouseX = Input.GetAxis("Mouse X") * 0.5f;
         float mouseY = Input.GetAxis("Mouse Y") * 0.5f;
         //target中心に回転する
-        transform.RotateAround(_targetPosition, Vector3.up, mouseX * Time.deltaTime * 200f);
+        transform.RotateAround(_targetPosition, targetProbe.transform.up, mouseX * Time.deltaTime * 200f);
         //カメラの垂直移動
-        transform.RotateAround(_targetPosition, Vector3.right, mouseY * Time.deltaTime * 200f);
+        transform.RotateAround(_targetPosition, transform.right, mouseY * Time.deltaTime * 200f);
     }
 }
