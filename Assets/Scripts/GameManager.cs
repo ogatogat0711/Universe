@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     private int _timerMinutes; // タイマーの分
     private float _timerSeconds;// タイマーの秒
     private float _formerSeconds;// 前の秒数を保持する変数
+    public Navigation navigation; // ナビゲーション
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -46,6 +48,8 @@ public class GameManager : MonoBehaviour
         _formerSeconds = 0f; // 前の秒数を初期化
         
         timerText.text = "00:00";
+        navigation.navigationText.text = "";
+        navigation.ShowMessage("マウスを使って予定航路を描きましょう！\n\n");
     }
 
     // Update is called once per frame
@@ -54,10 +58,18 @@ public class GameManager : MonoBehaviour
         if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && !_didStartOnce && !DrawLine.IsDrawing)
         {
             startButton.interactable = true;// UIボタンを有効化
+            navigation.ShowMessage("準備はできましたか？\n\n"
+                                   + "「スタート」ボタンを押して、出発しましょう！");
         }
         else
         {
             startButton.interactable = false;
+
+            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.IsDrawing && _mover.drawLine.positionCount!=100)
+            {
+                navigation.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n\n"
+                                       + "もう少し探査機の近傍から描いてみてください！");
+            }
         }
 
         if (probe.fuel > 0 && _isPlaying)

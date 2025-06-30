@@ -8,6 +8,7 @@ public class DrawLine : MonoBehaviour
     public Camera upperCamera;//上方カメラ
 
     private int _positionCount = 0;//点の数
+    public int maxPositionCount = 90; // 最大点数
     private float _interval = 1f; // 点の間隔
     public static bool IsDrawing; // 描画中かどうか
 
@@ -66,6 +67,11 @@ public class DrawLine : MonoBehaviour
         if (_positionCount == 0)
         {
             return true; // 最初の点は常に追加
+        }
+
+        if (_positionCount > maxPositionCount)
+        {
+            return false;// 点の数が最大を超えたら追加しない
         }
 
         Vector3 lastPosition = lineRenderer.GetPosition(_positionCount - 1);// 最後の点の位置を取得
