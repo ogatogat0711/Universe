@@ -32,10 +32,10 @@ public class MoveAlongLine : MonoBehaviour
     {
         if (!canAutoMove)
         {
-            var (minDistance, minIndex) = GetMinDistanceAndIndexFromLine();
+            var (minDistance, minIndex) = GetMinDistanceAndIndexFromLine();//現在位置から最も近い点までの距離とインデックスを取得
             if (minDistance <= maxDistance)
             {
-                _nearLineTimer += Time.fixedDeltaTime;
+                _nearLineTimer += Time.fixedDeltaTime;//近い点にいる時間を計測
                 if (_nearLineTimer >= reenableAutoMoveTime)
                 {
                     canAutoMove = true;

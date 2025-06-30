@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
     private int _timerMinutes; // タイマーの分
     private float _timerSeconds;// タイマーの秒
     private float _formerSeconds;// 前の秒数を保持する変数
-    public Navigation navigation; // ナビゲーション
+    public Navigation navigationForUpper; //上方カメラ用のナビゲーション
+    public Navigation navigationForFollowing; //追従カメラ用のナビゲーション
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -52,8 +53,9 @@ public class GameManager : MonoBehaviour
         _formerSeconds = 0f; // 前の秒数を初期化
         
         timerText.text = "00:00";
-        navigation.navigationText.text = "";
-        navigation.ShowMessage("マウスを使って予定航路を描きましょう！\n");
+        navigationForUpper.navigationText.text = "";
+        navigationForUpper.ShowMessage("マウスを使って予定航路を描きましょう！\n");
+        navigationForFollowing.enabled = false;
     }
 
     // Update is called once per frame
@@ -62,15 +64,18 @@ public class GameManager : MonoBehaviour
         if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && !_didStartOnce && !DrawLine.IsDrawing)
         {
             startButton.interactable = true;// UIボタンを有効化
-            if (draw.GetLineLength() < probe.GetDistanceToTheTarget())
-            {
-                navigation.ShowMessage("なんか航路が短くないですか？\n"
-                                        + "もう一回航路を見直した方がいい気がします・・・\n");
+            if (Vector3.Distance(_mover.drawLine.GetPosition(_mover.drawLine.positionCount - 1) , probe.collisionTarget.transform.position) > probe.collisionTarget.transform.localScale.x)
+            {  // 航路の終点がターゲットの半径より遠いとき
+                navigationForUpper.ShowMessage("航路の終点が目標から遠いようです！\n"
+                                        + "もう一回航路を見直すのを推奨します！\n");
             }
             else
             {
-                navigation.ShowMessage("準備はできましたか？\n"
-                                       + "「スタート」ボタンを押して、出発しましょう！\n");
+                navigationForUpper.ShowMessage("準備はできましたか？\n"
+                                       + "「スタート」ボタンを押して、出発しましょう！\n"
+                                       + "この航路の最低消費燃料の理論値は"
+                                       + _mover.drawLine.positionCount
+                                       + "です");
             }
             
         }
@@ -78,11 +83,10 @@ public class GameManager : MonoBehaviour
         {
             startButton.interactable = false;
 
-            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.IsDrawing && _didDrawOnce)
+            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.IsDrawing && !_didDrawOnce)
             {
-                navigation.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n"
-                                       + "もう少し探査機の近傍から描いてみてください！");
-                _didDrawOnce = true;
+                navigationForUpper.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n"
+                                                + "もう少し探査機の近傍から描いてみてください！");
             }
         }
 
@@ -90,6 +94,12 @@ public class GameManager : MonoBehaviour
         {
             fuelText.text = probe.fuel.ToString();// 燃料を表示
             fuelGauge.fillAmount = (float)probe.fuel / probe.maxFuel; // 燃料ゲージの更新
+
+            if ((float)probe.fuel / probe.maxFuel < 0.5f)
+            {
+                navigationForFollowing.ShowMessage("燃料が半分を切りました！\n"
+                                                +"残量に留意ください！");
+            }
         }
 
         if (followingCamera.enabled)
@@ -129,10 +139,14 @@ public class GameManager : MonoBehaviour
         
         followingCamera.enabled = true;// 追従カメラを有効化
         ChangeCamera(upperCamera, followingCamera);// 上方カメラから追従カメラに切り替え
+        navigationForFollowing.enabled = true;//ナビゲーションを有効化
+        navigationForFollowing.navigationText.text = "";
         upperCamera.enabled = false;// 上方カメラを無効化
+        navigationForUpper.enabled = false;//上方カメラのナビゲーションを無効化
         probe.canMove = true;// Probeの移動を有効化
 
         fuelText.text = probe.maxFuel.ToString(); // 初期燃料を表示
+        
     }
 
     private void GameOver()

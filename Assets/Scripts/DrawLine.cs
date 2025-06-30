@@ -34,10 +34,6 @@ public class DrawLine : MonoBehaviour
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            //if (IsDrawing)
-            //{
-              //  Debug.Log(GetLineLength());
-            //}
             // 左クリックが離されたら描画を終了
             IsDrawing = false;
         }
@@ -84,13 +80,4 @@ public class DrawLine : MonoBehaviour
         return distance >= _interval; // 前の点との距離が間隔以上ならtrue
     }
     
-    public float GetLineLength()
-    {
-        float length = 0f;
-        for (int i = 0; i < lineRenderer.positionCount - 1; i++)
-        {
-            length += Vector3.Distance(lineRenderer.GetPosition(i), lineRenderer.GetPosition(i + 1));
-        }
-        return length;
-    }
 }
