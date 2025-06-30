@@ -73,3 +73,7 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+Assets/TextMesh Pro/Fonts/ZenKakuGothicAntique-Black SDF.asset
+Assets/TextMesh Pro/Fonts/ZenKakuGothicAntique-Black SDF.asset.meta
+Assets/TextMesh Pro/Fonts/ZenKakuGothicAntique-Black.ttf
+Assets/TextMesh Pro/Fonts/ZenKakuGothicAntique-Black.ttf.meta

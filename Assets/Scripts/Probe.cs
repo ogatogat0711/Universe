@@ -55,4 +55,9 @@ public class Probe : MonoBehaviour
             Time.timeScale = 0f;
         }
     }
+
+    public float GetDistanceToTheTarget()
+    {
+        return Vector3.Distance(transform.position, collisionTarget.transform.position);
+    }
 }

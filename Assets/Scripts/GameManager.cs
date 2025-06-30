@@ -3,6 +3,7 @@ using TMPro;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -14,7 +15,9 @@ public class GameManager : MonoBehaviour
     public Button startButton; // UIボタン
     public TMP_Text fuelText; // 燃料表示用のテキスト
     private MoveAlongLine _mover;
+    public DrawLine draw;
     private bool _didStartOnce;//一回スタートしたかを管理するフラグ
+    private bool _didDrawOnce;//一回描画したかを管理するフラグ
     private bool _isPlaying;// ゲームがプレイ中かどうかのフラグ
     public Image fuelGauge;
     public TMP_Text timerText;// タイマー表示用のテキスト
@@ -41,6 +44,7 @@ public class GameManager : MonoBehaviour
         probe.canMove = false;//最初は移動を無効化
         _mover = probe.GetComponent<MoveAlongLine>();
         _didStartOnce = false;
+        _didDrawOnce = false;
         _isPlaying = true;
         
         _timerMinutes = 0; // タイマーの初期値
@@ -49,7 +53,7 @@ public class GameManager : MonoBehaviour
         
         timerText.text = "00:00";
         navigation.navigationText.text = "";
-        navigation.ShowMessage("マウスを使って予定航路を描きましょう！\n\n");
+        navigation.ShowMessage("マウスを使って予定航路を描きましょう！\n");
     }
 
     // Update is called once per frame
@@ -58,17 +62,27 @@ public class GameManager : MonoBehaviour
         if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && !_didStartOnce && !DrawLine.IsDrawing)
         {
             startButton.interactable = true;// UIボタンを有効化
-            navigation.ShowMessage("準備はできましたか？\n\n"
-                                   + "「スタート」ボタンを押して、出発しましょう！");
+            if (draw.GetLineLength() < probe.GetDistanceToTheTarget())
+            {
+                navigation.ShowMessage("なんか航路が短くないですか？\n"
+                                        + "もう一回航路を見直した方がいい気がします・・・\n");
+            }
+            else
+            {
+                navigation.ShowMessage("準備はできましたか？\n"
+                                       + "「スタート」ボタンを押して、出発しましょう！\n");
+            }
+            
         }
         else
         {
             startButton.interactable = false;
 
-            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.IsDrawing && _mover.drawLine.positionCount!=100)
+            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.IsDrawing && _didDrawOnce)
             {
-                navigation.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n\n"
+                navigation.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n"
                                        + "もう少し探査機の近傍から描いてみてください！");
+                _didDrawOnce = true;
             }
         }
 

@@ -11,6 +11,8 @@ public class MoveAlongLine : MonoBehaviour
     public bool isMoving;//移動中かどうかのフラグ.UIボタンで制御
 
     public int currentIndex;
+    private float _nearLineTimer = 0f;
+    public float reenableAutoMoveTime = 3f;
     private Probe _probe;
     private Rigidbody _rigidbody;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -28,6 +30,27 @@ public class MoveAlongLine : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!canAutoMove)
+        {
+            var (minDistance, minIndex) = GetMinDistanceAndIndexFromLine();
+            if (minDistance <= maxDistance)
+            {
+                _nearLineTimer += Time.fixedDeltaTime;
+                if (_nearLineTimer >= reenableAutoMoveTime)
+                {
+                    canAutoMove = true;
+                    currentIndex = minIndex;
+                    _nearLineTimer = 0f;
+                }
+            }
+            else
+            {
+                _nearLineTimer = 0f;
+            }
+
+            return;
+        }
+        
         if (isMoving && drawLine.positionCount > 1)
         {
             Vector3 target = drawLine.GetPosition(currentIndex + 1);//向かう先の座標
@@ -45,29 +68,25 @@ public class MoveAlongLine : MonoBehaviour
                     isMoving = false;//最後のインデックスまで行ったので終了
                 }
             }
-
-            float minDistance = GetMinDistanceFromLine();
-            if (minDistance > maxDistance)
-            {
-                isMoving = false;//曲線から離れたため自動運転停止
-                canAutoMove = false;
-            }
+            
         }
         
     }
 
-    private float GetMinDistanceFromLine()
+    private (float, int) GetMinDistanceAndIndexFromLine()
     {
         float minDistance = float.MaxValue;
+        int minIndex = 0;
         for (int i = 0; i < drawLine.positionCount; i++)
         {
             float distance = Vector3.Distance(transform.position, drawLine.GetPosition(i));
             if (distance < minDistance)
             {
                 minDistance = distance;
+                minIndex = i;
             }
         }
-        
-        return minDistance;
+        return (minDistance, minIndex);
     }
+    
 }
