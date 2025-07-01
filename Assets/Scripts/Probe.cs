@@ -41,9 +41,6 @@ public class Probe : MonoBehaviour
             {
                 isManipulating = false;
             }
-
-            _fuelConsumption = Mathf.RoundToInt(Mathf.Abs(_horizontal) + Mathf.Abs(_vertical));
-            _fuelConsumption *= fuelConsumptionRatioOfManipulation; // 燃料消費量を計算
         }
     }
 
@@ -54,6 +51,8 @@ public class Probe : MonoBehaviour
             Vector3 cameraDirection= Vector3.Scale(followingCamera.transform.forward, new Vector3(1, 0, 1)).normalized;//カメラの見ている方向からXZ平面の単位ベクトルを取得
             Vector3 moveDirection = cameraDirection * _vertical + followingCamera.transform.right * _horizontal;//キー入力から移動方向を決定
             _rigidbody.linearVelocity = moveDirection * speed;
+            _fuelConsumption = Mathf.RoundToInt(Mathf.Abs(_horizontal) + Mathf.Abs(_vertical));
+            _fuelConsumption *= fuelConsumptionRatioOfManipulation; // 燃料消費量を計算
             fuel -= _fuelConsumption;
             //Debug.Log(fuel);
         }

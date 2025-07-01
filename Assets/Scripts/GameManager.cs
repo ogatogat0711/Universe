@@ -16,11 +16,12 @@ public class GameManager : MonoBehaviour
     public TMP_Text fuelText; // 燃料表示用のテキスト
     private MoveAlongLine _mover;
     public DrawLine draw;
-    private bool _wasManipulating;//前のフレームで操作していたかどうかを管理するフラグ
     private bool _didStartOnce;//一回スタートしたかを管理するフラグ
     private bool _didDrawOnce;//一回描画したかを管理するフラグ
     private bool _isPlaying;// ゲームがプレイ中かどうかのフラグ
+    private bool _hasWarnedForHalfFuel; // 半分の燃料を警告したかどうかのフラグ
     public Image fuelGauge;
+    public Image recoveryTimerGauge; // 復帰タイマーゲージ
     public TMP_Text timerText;// タイマー表示用のテキスト
     private int _timerMinutes; // タイマーの分
     private float _timerSeconds;// タイマーの秒
@@ -44,11 +45,12 @@ public class GameManager : MonoBehaviour
             }
         }
         probe.canMove = false;//最初は移動を無効化
+        
         _mover = probe.GetComponent<MoveAlongLine>();
         _didStartOnce = false;
         _didDrawOnce = false;
         _isPlaying = true;
-        _wasManipulating = false;
+        _hasWarnedForHalfFuel = false;
         
         _timerMinutes = 0; // タイマーの初期値
         _timerSeconds = 0f;
@@ -94,26 +96,42 @@ public class GameManager : MonoBehaviour
 
         if (_mover.isMoving)
         { //自動航行中
-            navigationForFollowing.ShowMessage("自動航行中です！\n"
-                                               + "WASDキーで手動操縦に切り替えることもできます！\n");
+            navigationForFollowing.ShowMessage("自動航行中です！\n");
         }
+
+        if (_mover.wasFarAway)
+        {
+            if (!_mover.canAutoMove)
+            {
+                navigationForFollowing.ShowMessage("予定航路から大きく離れました！\n"
+                                                   + "直ちに手動操縦で予定航路に接近してください！\n"
+                                                   + "(WASDキーで手動操縦)");
+            }
+
+            else if (_mover.canAutoMove)
+            {
+                navigationForFollowing.ShowMessage("復帰準備完了です！\n"
+                                                   + "(Rキーで自動航行に復帰)");
+            }
+
+            recoveryTimerGauge.enabled = _mover.isRecovering;
+            if (recoveryTimerGauge.enabled)
+            {
+                recoveryTimerGauge.fillAmount = _mover.nearLineTimer / _mover.reenableAutoMoveTime; // 復帰タイマーゲージの更新
+            }
         
-        if (probe.isManipulating && !_wasManipulating)
-        { //手動操作中
-            navigationForFollowing.ShowMessage("手動操作中です！\n"
-                                               + "消費燃料にご注意ください！\n");
         }
-        _wasManipulating = probe.isManipulating;
 
         if (probe.fuel > 0 && _isPlaying)
         {
             fuelText.text = probe.fuel.ToString();// 燃料を表示
             fuelGauge.fillAmount = (float)probe.fuel / probe.maxFuel; // 燃料ゲージの更新
 
-            if ((float)probe.fuel / probe.maxFuel < 0.5f)
+            if ((float)probe.fuel / probe.maxFuel < 0.5f && !_hasWarnedForHalfFuel)
             {
                 navigationForFollowing.ShowMessage("燃料が半分を切りました！\n"
                                                 +"残量に留意ください！");
+                _hasWarnedForHalfFuel = true; // 半分の燃料を警告したのでフラグを立てる
             }
         }
 
@@ -153,12 +171,15 @@ public class GameManager : MonoBehaviour
         _mover.currentIndex = 0;
         
         followingCamera.enabled = true;// 追従カメラを有効化
+        _mover.isEnableFollowing = true;// 追従カメラを有効にしたのでフラグを立てる
         ChangeCamera(upperCamera, followingCamera);// 上方カメラから追従カメラに切り替え
         navigationForFollowing.enabled = true;//ナビゲーションを有効化
         navigationForFollowing.navigationText.text = "";
         upperCamera.enabled = false;// 上方カメラを無効化
         navigationForUpper.enabled = false;//上方カメラのナビゲーションを無効化
+        
         probe.canMove = true;// Probeの移動を有効化
+        recoveryTimerGauge.enabled = false;// 復帰タイマーゲージは最初は無効化
 
         fuelText.text = probe.maxFuel.ToString(); // 初期燃料を表示
         
