@@ -17,12 +17,14 @@ public class Probe : MonoBehaviour
     public int fuelConsumptionRatioOfManipulation = 3; // 操作時の燃料消費率
     public int fuelConsumptionRatioOfAutoMove = 1; // 自動移動時の燃料消費率
     private int _fuelConsumption; // 燃料消費量
+    public bool isClear;//クリアしたかどうかのフラグ
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         fuel = maxFuel;
         _rigidbody = GetComponent<Rigidbody>();
         isManipulating = false;
+        isClear = false;
     }
 
     // Update is called once per frame
@@ -62,8 +64,9 @@ public class Probe : MonoBehaviour
     {
         if (collision.gameObject == collisionTarget)
         {
-            Debug.Log("Hit");
-            Time.timeScale = 0f;
+            //Debug.Log("Hit");
+            isClear = true;
+            //Time.timeScale = 0f;
         }
     }
 }

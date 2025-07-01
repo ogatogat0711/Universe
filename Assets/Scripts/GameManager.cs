@@ -3,6 +3,7 @@ using TMPro;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -28,9 +29,17 @@ public class GameManager : MonoBehaviour
     private float _formerSeconds;// 前の秒数を保持する変数
     public Navigation navigationForUpper; //上方カメラ用のナビゲーション
     public Navigation navigationForFollowing; //追従カメラ用のナビゲーション
+    public Canvas normalCanvas; // 通常表示用のCanvas
+    public Canvas resultCanvas; // 結果表示用のCanvas
+    public TMP_Text gameOverText;
+    public TMP_Text gameOverResultText;
+    public TMP_Text clearText;
+    public TMP_Text clearResultText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        normalCanvas.enabled = false;
+        resultCanvas.enabled = false; // 結果表示用のCanvasを無効化
         followingCamera.enabled = false;// 追従カメラは最初は無効化
         startButton.interactable = false;// UIボタンは最初は無効化
         _celestialBodies = GameObject.FindGameObjectsWithTag("CelestialBody");
@@ -147,8 +156,12 @@ public class GameManager : MonoBehaviour
             _isPlaying = false;// ゲームプレイ中フラグをfalseにする
             GameOver();// ゲームオーバー処理を呼び出す
         }
-        
-        
+
+        if (probe.isClear)
+        {
+            _isPlaying = false;
+            Clear();
+        }
     }
     
     //UIボタンから呼び出されるメソッド
@@ -177,6 +190,8 @@ public class GameManager : MonoBehaviour
         navigationForFollowing.navigationText.text = "";
         upperCamera.enabled = false;// 上方カメラを無効化
         navigationForUpper.enabled = false;//上方カメラのナビゲーションを無効化
+        normalCanvas.enabled = true;
+        resultCanvas.enabled = false;
         
         probe.canMove = true;// Probeの移動を有効化
         recoveryTimerGauge.enabled = false;// 復帰タイマーゲージは最初は無効化
@@ -187,8 +202,39 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
+        normalCanvas.enabled = false;
+        resultCanvas.enabled = true; // 結果表示用のCanvasを有効化
+        clearText.enabled = false;
+        
+        float distanceToTarget = Vector3.Distance(probe.transform.position, probe.collisionTarget.transform.position);
+        gameOverResultText.text += distanceToTarget.ToString("F2") + "万km\n";
         Time.timeScale = 0;
-        Debug.Log("Game Over");
+        //Debug.Log("Game Over");
+    }
+
+    public void Retry()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // 現在のシーンを再読み込み
+    }
+
+    private void Clear()
+    {
+        Time.timeScale = 0;
+        normalCanvas.enabled = false;
+        resultCanvas.enabled = true; // 結果表示用のCanvasを有効化
+        clearText.enabled = true;
+        gameOverText.enabled = false; // ゲームオーバーテキストを非表示
+        gameOverResultText.enabled = false;
+        float fuelPercentage = (float)probe.fuel / probe.maxFuel * 100f;
+        clearResultText.text = "Time:" + _timerMinutes.ToString("00") + ":" + ((int)_timerSeconds).ToString("00") + "\n"
+                          + "Remaining Fuel:" + fuelPercentage.ToString("00") + "%\n";
+        
+        int timeInSeconds = _timerMinutes * 60 + (int)_timerSeconds;
+        int score = probe.fuel / probe.maxFuel * 1000;
+        score += (10000 / timeInSeconds);
+
+        clearResultText.text += "Score:" + score.ToString() + "\n";
     }
     
     private void ChangeCamera(Camera oldCamera, Camera newCamera)
