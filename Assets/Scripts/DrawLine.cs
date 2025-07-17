@@ -1,3 +1,5 @@
+using System;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -5,14 +7,20 @@ using UnityEngine.Serialization;
 public class DrawLine : MonoBehaviour
 {
     public LineRenderer lineRenderer;
-    public Camera upperCamera;//上方カメラ
+    //public Camera upperCamera;//上方カメラ
+    public CinemachineVirtualCameraBase upperVirtualCamera;// 上方カメラの仮想カメラ
+    private Camera _mainCamera;//描画用のメインカメラ
 
     private int _positionCount = 0;//点の数
     public int maxPositionCount = 90; // 最大点数
     private float _interval = 1f; // 点の間隔
     public static bool IsDrawing; // 描画中かどうか
 
-    // Update is called once per frame
+    private void Start()
+    {
+        _mainCamera = Camera.main;
+    }
+
     void Update()
     {
         // UI要素の上でマウスがクリックされている場合、描画を無効化
@@ -25,7 +33,7 @@ public class DrawLine : MonoBehaviour
             return;
         }
         
-        if (Input.GetMouseButtonDown(0) && upperCamera.enabled)
+        if (Input.GetMouseButtonDown(0) && upperVirtualCamera.IsLive)
         {
             // 左クリックが押されている間、描画を開始.ただし,上方カメラの時のみ
             IsDrawing = true;
@@ -42,8 +50,8 @@ public class DrawLine : MonoBehaviour
         {
             // 描画中の場合、マウスの位置を取得して点を追加
             Vector3 mousePosition = Input.mousePosition;
-            mousePosition.z = upperCamera.transform.position.y;// 上方カメラのY座標を基準にする
-            Vector3 worldPosition = upperCamera.ScreenToWorldPoint(mousePosition);// マウス位置をワールド座標に変換
+            mousePosition.z = upperVirtualCamera.transform.position.y;// 上方カメラのY座標を基準にする
+            Vector3 worldPosition = _mainCamera.ScreenToWorldPoint(mousePosition);// マウス位置をワールド座標に変換
             worldPosition.y = 0;// Y座標を0に設定して平面上に制限
             SetPosition(worldPosition);
         }

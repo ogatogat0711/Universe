@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,6 +10,7 @@ public class Probe : MonoBehaviour
     private float _horizontal;
     private float _vertical;
     public Camera followingCamera;
+    public CinemachineVirtualCameraBase followingVirtualCamera;
     public GameObject collisionTarget;
     public bool canMove;//移動可能かどうかのフラグ. UIボタンで制御
     public bool isManipulating; // 操作中かどうかのフラグ
@@ -50,8 +52,8 @@ public class Probe : MonoBehaviour
     {
         if (canMove)
         {
-            Vector3 cameraDirection= Vector3.Scale(followingCamera.transform.forward, new Vector3(1, 0, 1)).normalized;//カメラの見ている方向からXZ平面の単位ベクトルを取得
-            Vector3 moveDirection = cameraDirection * _vertical + followingCamera.transform.right * _horizontal;//キー入力から移動方向を決定
+            Vector3 cameraDirection= Vector3.Scale(followingVirtualCamera.transform.forward, new Vector3(1, 0, 1)).normalized;//カメラの見ている方向からXZ平面の単位ベクトルを取得
+            Vector3 moveDirection = cameraDirection * _vertical + followingVirtualCamera.transform.right * _horizontal;//キー入力から移動方向を決定
             _rigidbody.linearVelocity = moveDirection * speed;
             _fuelConsumption = Mathf.RoundToInt(Mathf.Abs(_horizontal) + Mathf.Abs(_vertical));
             _fuelConsumption *= fuelConsumptionRatioOfManipulation; // 燃料消費量を計算

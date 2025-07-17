@@ -1,5 +1,6 @@
 using System;
 using TMPro;
+using Unity.Cinemachine;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,8 +12,10 @@ public class GameManager : MonoBehaviour
 {
     private GameObject[] _celestialBodies;
     public Probe probe;
-    public Camera upperCamera; // 上方カメラ
-    public Camera followingCamera; // 追従カメラ
+    //public Camera upperCamera; // 上方カメラ
+    public CinemachineVirtualCameraBase upperVirtualCamera; // 上方カメラの仮想カメラ
+    //public Camera followingCamera; // 追従カメラ
+    public CinemachineVirtualCameraBase followingVirtualCamera; // 追従カメラの仮想カメラ
     public Button startButton; // UIボタン
     public TMP_Text fuelText; // 燃料表示用のテキスト
     private MoveAlongLine _mover;
@@ -29,7 +32,8 @@ public class GameManager : MonoBehaviour
     private float _formerSeconds;// 前の秒数を保持する変数
     public Navigation navigationForUpper; //上方カメラ用のナビゲーション
     public Navigation navigationForFollowing; //追従カメラ用のナビゲーション
-    public Canvas normalCanvas; // 通常表示用のCanvas
+    public Canvas upperCanvas; // 上方カメラ用のCanvas
+    public Canvas normalFollowingCanvas; // 通常表示用のCanvas
     public Canvas resultCanvas; // 結果表示用のCanvas
     public TMP_Text gameOverText;
     public TMP_Text gameOverResultText;
@@ -38,9 +42,12 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        normalCanvas.enabled = false;
+        upperCanvas.enabled = true;
+        normalFollowingCanvas.enabled = false;
         resultCanvas.enabled = false; // 結果表示用のCanvasを無効化
-        followingCamera.enabled = false;// 追従カメラは最初は無効化
+        //followingCamera.enabled = false;// 追従カメラは最初は無効化
+        upperVirtualCamera.Priority = 10;// 上方カメラの優先度を高く設定
+        followingVirtualCamera.Priority = 0; // 追従カメラの優先度を低く設定
         startButton.interactable = false;// UIボタンは最初は無効化
         _celestialBodies = GameObject.FindGameObjectsWithTag("CelestialBody");
         foreach (var cb in _celestialBodies)
@@ -144,7 +151,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (followingCamera.enabled)
+        if (followingVirtualCamera.IsLive)
         {
             UpdateTimer();
         }
@@ -183,15 +190,17 @@ public class GameManager : MonoBehaviour
         _mover.isMoving = true;
         _mover.currentIndex = 0;
         
-        followingCamera.enabled = true;// 追従カメラを有効化
+        //followingCamera.enabled = true;// 追従カメラを有効化
         _mover.isEnableFollowing = true;// 追従カメラを有効にしたのでフラグを立てる
-        ChangeCamera(upperCamera, followingCamera);// 上方カメラから追従カメラに切り替え
+        //ChangeCamera(upperCamera, followingCamera); // 上方カメラから追従カメラに切り替え
+        ChangeVirtualCamera(upperVirtualCamera, followingVirtualCamera); // 上方カメラの仮想カメラから追従カメラの仮想カメラに切り替え
         navigationForFollowing.enabled = true;//ナビゲーションを有効化
         navigationForFollowing.navigationText.text = "";
-        upperCamera.enabled = false;// 上方カメラを無効化
+        //upperCamera.enabled = false;// 上方カメラを無効化
         navigationForUpper.enabled = false;//上方カメラのナビゲーションを無効化
-        normalCanvas.enabled = true;
+        normalFollowingCanvas.enabled = true;
         resultCanvas.enabled = false;
+        upperCanvas.enabled = false;
         
         probe.canMove = true;// Probeの移動を有効化
         recoveryTimerGauge.enabled = false;// 復帰タイマーゲージは最初は無効化
@@ -202,7 +211,8 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
-        normalCanvas.enabled = false;
+        normalFollowingCanvas.enabled = false;
+        upperCanvas.enabled = false;
         resultCanvas.enabled = true; // 結果表示用のCanvasを有効化
         clearText.enabled = false;
         
@@ -221,7 +231,8 @@ public class GameManager : MonoBehaviour
     private void Clear()
     {
         Time.timeScale = 0;
-        normalCanvas.enabled = false;
+        normalFollowingCanvas.enabled = false;
+        upperCanvas.enabled = false;
         resultCanvas.enabled = true; // 結果表示用のCanvasを有効化
         clearText.enabled = true;
         gameOverText.enabled = false; // ゲームオーバーテキストを非表示
@@ -247,6 +258,19 @@ public class GameManager : MonoBehaviour
         if (newCamera != null)
         {
             newCamera.gameObject.SetActive(true);
+        }
+    }
+    
+    private void ChangeVirtualCamera(CinemachineVirtualCameraBase oldCamera, CinemachineVirtualCameraBase newCamera)
+    {
+        if (oldCamera != null)
+        {
+            oldCamera.Priority = 0; // 古いカメラの優先度を下げる
+        }
+        
+        if (newCamera != null)
+        {
+            newCamera.Priority = 10; // 新しいカメラの優先度を上げる
         }
     }
 
