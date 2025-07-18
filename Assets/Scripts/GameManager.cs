@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEditor.SceneManagement;
@@ -30,8 +31,8 @@ public class GameManager : MonoBehaviour
     private int _timerMinutes; // タイマーの分
     private float _timerSeconds;// タイマーの秒
     private float _formerSeconds;// 前の秒数を保持する変数
-    public Navigation navigationForUpper; //上方カメラ用のナビゲーション
-    public Navigation navigationForFollowing; //追従カメラ用のナビゲーション
+    //public Navigation navigationForUpper; //上方カメラ用のナビゲーション
+    //public Navigation navigationForFollowing; //追従カメラ用のナビゲーション
     public Canvas upperCanvas; // 上方カメラ用のCanvas
     public Canvas normalFollowingCanvas; // 通常表示用のCanvas
     public Canvas resultCanvas; // 結果表示用のCanvas
@@ -40,15 +41,14 @@ public class GameManager : MonoBehaviour
     public TMP_Text clearText;
     public TMP_Text clearResultText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         upperCanvas.enabled = true;
         normalFollowingCanvas.enabled = false;
         resultCanvas.enabled = false; // 結果表示用のCanvasを無効化
         //followingCamera.enabled = false;// 追従カメラは最初は無効化
-        upperVirtualCamera.Priority = 10;// 上方カメラの優先度を高く設定
-        followingVirtualCamera.Priority = 0; // 追従カメラの優先度を低く設定
         startButton.interactable = false;// UIボタンは最初は無効化
+        
         _celestialBodies = GameObject.FindGameObjectsWithTag("CelestialBody");
         foreach (var cb in _celestialBodies)
         {
@@ -73,9 +73,20 @@ public class GameManager : MonoBehaviour
         _formerSeconds = 0f; // 前の秒数を初期化
         
         timerText.text = "00:00";
-        navigationForUpper.navigationText.text = "";
-        navigationForUpper.ShowMessage("マウスを使って予定航路を描きましょう！\n");
-        navigationForFollowing.enabled = false;
+        //navigationForUpper.navigationText.text = "";
+        //navigationForUpper.ShowMessage("マウスを使って予定航路を描きましょう！\n");
+        //navigationForFollowing.enabled = false;
+    }
+
+    IEnumerator Start()
+    {
+        yield return null;//1フレーム待機（ProbeのTransformが初期化されるのを待つ）
+        
+        followingVirtualCamera.Follow = probe.transform; // 追従カメラのターゲットを設定
+        
+        upperVirtualCamera.Priority = 10;
+        followingVirtualCamera.Priority = 0;
+        
     }
 
     // Update is called once per frame
@@ -86,16 +97,16 @@ public class GameManager : MonoBehaviour
             startButton.interactable = true;// UIボタンを有効化
             if (Vector3.Distance(_mover.drawLine.GetPosition(_mover.drawLine.positionCount - 1) , probe.collisionTarget.transform.position) > probe.collisionTarget.transform.localScale.x)
             {  // 航路の終点がターゲットの半径より遠いとき
-                navigationForUpper.ShowMessage("航路の終点が目標から遠いようです！\n"
-                                        + "もう一回航路を見直すのを推奨します！\n");
+                //navigationForUpper.ShowMessage("航路の終点が目標から遠いようです！\n"
+                //                        + "もう一回航路を見直すのを推奨します！\n");
             }
             else
             {
-                navigationForUpper.ShowMessage("準備はできましたか？\n"
-                                       + "「スタート」ボタンを押して、出発しましょう！\n"
-                                       + "この航路の最低消費燃料の理論値は"
-                                       + _mover.drawLine.positionCount
-                                       + "です");
+                //navigationForUpper.ShowMessage("準備はできましたか？\n"
+                //                       + "「スタート」ボタンを押して、出発しましょう！\n"
+                //                       + "この航路の最低消費燃料の理論値は"
+                //                       + _mover.drawLine.positionCount
+                //                       + "です");
             }
             
         }
@@ -105,29 +116,29 @@ public class GameManager : MonoBehaviour
 
             if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.IsDrawing && _didDrawOnce)
             {
-                navigationForUpper.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n"
-                                                + "もう少し探査機の近傍から描いてみてください！");
+                //navigationForUpper.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n"
+                //                                + "もう少し探査機の近傍から描いてみてください！");
             }
         }
 
         if (_mover.isMoving)
         { //自動航行中
-            navigationForFollowing.ShowMessage("自動航行中です！\n");
+            //navigationForFollowing.ShowMessage("自動航行中です！\n");
         }
 
         if (_mover.wasFarAway)
         {
             if (!_mover.canAutoMove)
             {
-                navigationForFollowing.ShowMessage("予定航路から大きく離れました！\n"
-                                                   + "直ちに手動操縦で予定航路に接近してください！\n"
-                                                   + "(WASDキーで手動操縦)");
+                //navigationForFollowing.ShowMessage("予定航路から大きく離れました！\n"
+                //                                   + "直ちに手動操縦で予定航路に接近してください！\n"
+                //                                   + "(WASDキーで手動操縦)");
             }
 
             else if (_mover.canAutoMove)
             {
-                navigationForFollowing.ShowMessage("復帰準備完了です！\n"
-                                                   + "(Rキーで自動航行に復帰)");
+               // navigationForFollowing.ShowMessage("復帰準備完了です！\n"
+               //                                   + "(Rキーで自動航行に復帰)");
             }
 
             recoveryTimerGauge.enabled = _mover.isRecovering;
@@ -145,8 +156,8 @@ public class GameManager : MonoBehaviour
 
             if ((float)probe.fuel / probe.maxFuel < 0.5f && !_hasWarnedForHalfFuel)
             {
-                navigationForFollowing.ShowMessage("燃料が半分を切りました！\n"
-                                                +"残量に留意ください！");
+                //navigationForFollowing.ShowMessage("燃料が半分を切りました！\n"
+                //                                +"残量に留意ください！");
                 _hasWarnedForHalfFuel = true; // 半分の燃料を警告したのでフラグを立てる
             }
         }
@@ -193,17 +204,19 @@ public class GameManager : MonoBehaviour
         //followingCamera.enabled = true;// 追従カメラを有効化
         _mover.isEnableFollowing = true;// 追従カメラを有効にしたのでフラグを立てる
         //ChangeCamera(upperCamera, followingCamera); // 上方カメラから追従カメラに切り替え
-        ChangeVirtualCamera(upperVirtualCamera, followingVirtualCamera); // 上方カメラの仮想カメラから追従カメラの仮想カメラに切り替え
-        navigationForFollowing.enabled = true;//ナビゲーションを有効化
-        navigationForFollowing.navigationText.text = "";
+        
+        //navigationForFollowing.enabled = true;//ナビゲーションを有効化
+        //navigationForFollowing.navigationText.text = "";
         //upperCamera.enabled = false;// 上方カメラを無効化
-        navigationForUpper.enabled = false;//上方カメラのナビゲーションを無効化
+        //navigationForUpper.enabled = false;//上方カメラのナビゲーションを無効化
         normalFollowingCanvas.enabled = true;
         resultCanvas.enabled = false;
         upperCanvas.enabled = false;
         
         probe.canMove = true;// Probeの移動を有効化
         recoveryTimerGauge.enabled = false;// 復帰タイマーゲージは最初は無効化
+        
+        ChangeVirtualCamera(upperVirtualCamera, followingVirtualCamera); // 上方カメラの仮想カメラから追従カメラの仮想カメラに切り替え
 
         fuelText.text = probe.maxFuel.ToString(); // 初期燃料を表示
         
