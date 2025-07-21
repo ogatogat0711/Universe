@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text fuelText; // 燃料表示用のテキスト
     private MoveAlongLine _mover;
     public DrawLine draw;
+    private LineRenderer _lineRenderer;
     private bool _didStartOnce;//一回スタートしたかを管理するフラグ
     private bool _didDrawOnce;//一回描画したかを管理するフラグ
     private bool _isPlaying;// ゲームがプレイ中かどうかのフラグ
@@ -46,6 +47,11 @@ public class GameManager : MonoBehaviour
     public Image loadingBackground;
     public TMP_Text loadingText;
     public Slider loadingSlider;
+
+    private Color _originalStartColor;//LineRendererの開始点の元の色
+    private Color _originalEndColor;// LineRendererの終了点の元の色
+    private Color _transparentStartColor;// LineRendererの開始点の透明色
+    private Color _transparentEndColor;// LineRendererの終了点の透明色
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -79,6 +85,13 @@ public class GameManager : MonoBehaviour
         _formerSeconds = 0f; // 前の秒数を初期化
         
         timerText.text = "00:00";
+
+        _lineRenderer = draw.lineRenderer;
+        _originalStartColor = _lineRenderer.startColor;
+        _originalEndColor = _lineRenderer.endColor;
+        
+        _transparentStartColor = new Color(_originalStartColor.r, _originalStartColor.g, _originalStartColor.b, 0f);
+        _transparentEndColor = new Color(_originalEndColor.r, _originalEndColor.g, _originalEndColor.b, 0f);
         //navigationForUpper.navigationText.text = "";
         //navigationForUpper.ShowMessage("マウスを使って予定航路を描きましょう！\n");
         //navigationForFollowing.enabled = false;
@@ -192,11 +205,17 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C) && followingVirtualCamera.IsLive)
         {
             fpsCamera.Priority = 20;// FPSカメラの優先度を上げて有効化
+            
+            // LineRendererの色を透明に変更
+            _lineRenderer.startColor = _transparentStartColor;
+            _lineRenderer.endColor = _transparentEndColor;
         }
 
         if (Input.GetKeyUp(KeyCode.C) && fpsCamera.IsLive)
         {
             fpsCamera.Priority = 5; // FPSカメラの優先度を下げて無効化
+            _lineRenderer.startColor = _originalStartColor;//色を元に戻す
+            _lineRenderer.endColor = _originalEndColor;
         }
     }
     

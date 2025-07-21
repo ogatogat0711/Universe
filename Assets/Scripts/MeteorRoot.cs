@@ -14,6 +14,7 @@ public class MeteorRoot : MonoBehaviour
     public float transferInterval = 10f; // 生成位置変更の間隔
     private float _spawnTimer;//生成のタイマー
     private float _positionTransferTimer;//生成位置変更のタイマー 
+    public Transform meteorParent;
     public bool isSpawning;
 
     void Start()
@@ -61,7 +62,7 @@ public class MeteorRoot : MonoBehaviour
                 UnityEngine.Random.Range(-1f, 1f) // Z軸のオフセット
             );
             Meteor meteor = Instantiate(meteorPrefabs[index], transform.position + offset, Quaternion.identity);
-            meteor.transform.SetParent(transform); // MeteorをMeteorRootの子オブジェクトに設定
+            meteor.transform.SetParent(meteorParent); // MeteorをMeteorRootの子オブジェクトに設定
             Rigidbody rb = meteor.GetComponent<Rigidbody>();
             rb.AddForce(direction * meteor.speed, ForceMode.Impulse);//カメラの向いている方向に発射
             yield return new WaitForSeconds(0.2f); // 次の隕石を生成するまでの待機時間
