@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using Unity.Cinemachine;
+using Unity.Properties;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
     public CinemachineVirtualCameraBase upperVirtualCamera; // 上方カメラの仮想カメラ
     //public Camera followingCamera; // 追従カメラ
     public CinemachineVirtualCameraBase followingVirtualCamera; // 追従カメラの仮想カメラ
+    public CinemachineVirtualCameraBase fpsCamera;
     public Button startButton; // UIボタン
     public TMP_Text fuelText; // 燃料表示用のテキスト
     private MoveAlongLine _mover;
@@ -87,9 +89,11 @@ public class GameManager : MonoBehaviour
         yield return null;//1フレーム待機（ProbeのTransformが初期化されるのを待つ）
         
         followingVirtualCamera.Follow = probe.transform; // 追従カメラのターゲットを設定
+        fpsCamera.Follow = probe.transform;
         
         upperVirtualCamera.Priority = 10;
         followingVirtualCamera.Priority = 0;
+        fpsCamera.Priority = 0;
         
     }
 
@@ -183,6 +187,16 @@ public class GameManager : MonoBehaviour
         {
             _isPlaying = false;
             Clear();
+        }
+
+        if (Input.GetKeyDown(KeyCode.C) && followingVirtualCamera.IsLive)
+        {
+            fpsCamera.Priority = 20;// FPSカメラの優先度を上げて有効化
+        }
+
+        if (Input.GetKeyUp(KeyCode.C) && fpsCamera.IsLive)
+        {
+            fpsCamera.Priority = 5; // FPSカメラの優先度を下げて無効化
         }
     }
     
