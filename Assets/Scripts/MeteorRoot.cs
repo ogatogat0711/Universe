@@ -8,6 +8,8 @@ public class MeteorRoot : MonoBehaviour
 {
     public Meteor[] meteorPrefabs;
     public CinemachineVirtualCameraBase vCamera;
+    public CinemachineVirtualCameraBase fpsCamera;
+    public Camera mainCamera;
     public Probe probe;
     public int distanceFromProbe = 20;//Probeからの距離
     public float spawnInterval = 5f; // 隕石生成の間隔
@@ -27,14 +29,23 @@ public class MeteorRoot : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isSpawning && vCamera.IsLive)
+        if (isSpawning)
         {
             _spawnTimer += Time.fixedDeltaTime;
             _positionTransferTimer += Time.fixedDeltaTime;
+
+            if (vCamera.IsLive)
+            {
+                distanceFromProbe = 15;
+            }
+            else if (fpsCamera.IsLive)
+            {
+                distanceFromProbe = 20;
+            }
             
             if (_positionTransferTimer >= transferInterval)
             {
-                Vector3 cameraDirection = vCamera.transform.forward;
+                Vector3 cameraDirection = mainCamera.transform.forward;
                 Vector3 rootPosition = probe.transform.position - cameraDirection * distanceFromProbe; // カメラの後方に生成位置を設定
                 transform.position = rootPosition;
                 _positionTransferTimer = 0f; // 生成位置変更のタイマーリセット

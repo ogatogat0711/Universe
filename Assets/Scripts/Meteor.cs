@@ -18,12 +18,12 @@ public class Meteor : MonoBehaviour
     {
         if (hp <= 0)
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
         
         if( Vector3.Distance(transform.position, _probe.position) > maxDistance)//遠くに離れたときに削除
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
 
     }

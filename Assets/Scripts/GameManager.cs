@@ -112,8 +112,40 @@ public class GameManager : MonoBehaviour
         
     }
 
-    // Update is called once per frame
     void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.C) && followingVirtualCamera.IsLive)
+        {
+            // Cキーが押されたとき、FPSカメラに切り替え
+            fpsCamera.Priority = 20;// FPSカメラの優先度を上げて有効化
+            
+            // LineRendererの色を透明に変更
+            _lineRenderer.startColor = _transparentStartColor;
+            _lineRenderer.endColor = _transparentEndColor;
+            
+            normalFollowingCanvas.gameObject.SetActive(false);
+            fpsCanvas.gameObject.SetActive(true);
+
+            probe.canMove = false;//操作を無効化
+        }
+
+        if (Input.GetKeyUp(KeyCode.C) && fpsCamera.IsLive)
+        {
+            // Cキーが離されたとき、追従カメラに切り替え
+            fpsCamera.Priority = 5; // FPSカメラの優先度を下げて無効化
+            
+            _lineRenderer.startColor = _originalStartColor;//色を元に戻す
+            _lineRenderer.endColor = _originalEndColor;
+            
+            fpsCanvas.gameObject.SetActive(false);
+            normalFollowingCanvas.gameObject.SetActive(true);
+            
+            probe.canMove = true;//操作を有効化
+        }
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
     {
         if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && !_didStartOnce && !DrawLine.IsDrawing)
         {
@@ -165,7 +197,7 @@ public class GameManager : MonoBehaviour
             }
 
             recoveryTimerGauge.gameObject.SetActive(_mover.isRecovering);
-            if (recoveryTimerGauge.enabled)
+            if (recoveryTimerGauge.IsActive())
             {
                 recoveryTimerGauge.fillAmount = _mover.nearLineTimer / _mover.reenableAutoMoveTime; // 復帰タイマーゲージの更新
             }
@@ -185,7 +217,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (followingVirtualCamera.IsLive)
+        if (followingVirtualCamera.IsLive || fpsCamera.IsLive)
         {
             UpdateTimer();
         }
@@ -204,26 +236,12 @@ public class GameManager : MonoBehaviour
             Clear();
         }
 
-        if (Input.GetKeyDown(KeyCode.C) && followingVirtualCamera.IsLive)
+        if (followingVirtualCamera.IsLive)
         {
-            fpsCamera.Priority = 20;// FPSカメラの優先度を上げて有効化
-            normalFollowingCanvas.gameObject.SetActive(false);
-            fpsCanvas.gameObject.SetActive(true);
-            
-            // LineRendererの色を透明に変更
-            _lineRenderer.startColor = _transparentStartColor;
-            _lineRenderer.endColor = _transparentEndColor;
+            fpsCamera.transform.rotation = followingVirtualCamera.transform.rotation; // 追従カメラの向きをFPSカメラに反映
         }
 
-        if (Input.GetKeyUp(KeyCode.C) && fpsCamera.IsLive)
-        {
-            fpsCamera.Priority = 5; // FPSカメラの優先度を下げて無効化
-            _lineRenderer.startColor = _originalStartColor;//色を元に戻す
-            _lineRenderer.endColor = _originalEndColor;
-            
-            fpsCanvas.gameObject.SetActive(false);
-            normalFollowingCanvas.gameObject.SetActive(true);
-        }
+        
     }
     
     //UIボタンから呼び出されるメソッド
@@ -375,7 +393,7 @@ public class GameManager : MonoBehaviour
             _timerSeconds -= 60f;
         }
         // 秒数が異なったときのみタイマーの表示を更新
-        if ((int)_timerSeconds != (int)_formerSeconds)
+        if ((int)_timerSeconds != (int)_formerSeconds && normalFollowingCanvas.gameObject.activeSelf)
         {
             timerText.text = _timerMinutes.ToString("00") + ":" + ((int)_timerSeconds).ToString("00");
         }

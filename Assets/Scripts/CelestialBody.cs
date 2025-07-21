@@ -67,6 +67,7 @@ public class CelestialBody : MonoBehaviour
             float distanceSquared = Mathf.Pow(gravityDirection.magnitude, 2.0f); //ベクトルの大きさの2乗
 
             float force = gravitationCoefficient / distanceSquared;//GmM/r^2
+            force *= Time.fixedDeltaTime;
 
             _gravitationTarget.AddForce(gravityDirection.normalized * force, ForceMode.Force);//万有引力を作用
         }

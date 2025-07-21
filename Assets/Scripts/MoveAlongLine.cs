@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -12,6 +13,7 @@ public class MoveAlongLine : MonoBehaviour
     public bool isMoving;//移動中かどうかのフラグ
     public bool wasFarAway;//曲線から離れたかどうかのフラグ
     public bool isRecovering;//曲線に復帰中かどうかのフラグ
+    public CinemachineVirtualCameraBase fpsCamera;
     
     public int currentIndex;
     public float nearLineTimer = 0f;
@@ -81,13 +83,20 @@ public class MoveAlongLine : MonoBehaviour
         
         if (isMoving && !wasFarAway)//自動航行中で非離脱時
         {
+            if (fpsCamera.IsLive)
+            {
+                return;//fpsのときは何もしない
+            }
+            
             if (currentIndex >= drawLine.positionCount - 1)//インデックスが最後の点に達したとき
             {
                 isMoving = false;//最後のインデックスまで行ったので終了
+                return;
             }
             
             Vector3 target = drawLine.GetPosition(currentIndex + 1);//向かう先の座標
-            Vector3 direction = (target - transform.position).normalized;//向かう方向
+            Vector3 direction = (target - transform.position).normalized; //向かう方向
+            direction *= Time.fixedDeltaTime;
             
             _rigidbody.AddForce(direction * moveSpeed);
 
