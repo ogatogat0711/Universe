@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     public Canvas upperCanvas; // 上方カメラ用のCanvas
     public Canvas normalFollowingCanvas; // 通常表示用のCanvas
     public Canvas resultCanvas; // 結果表示用のCanvas
+    public Canvas fpsCanvas;// FPSカメラ用のCanvas
     public TMP_Text gameOverText;
     public TMP_Text gameOverResultText;
     public TMP_Text clearText;
@@ -58,6 +59,7 @@ public class GameManager : MonoBehaviour
         upperCanvas.gameObject.SetActive(true);
         normalFollowingCanvas.gameObject.SetActive(false);
         resultCanvas.gameObject.SetActive(false); // 結果表示用のCanvasを無効化
+        fpsCanvas.gameObject.SetActive(false);
         //followingCamera.enabled = false;// 追従カメラは最初は無効化
         startButton.interactable = false;// UIボタンは最初は無効化
         
@@ -205,6 +207,8 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C) && followingVirtualCamera.IsLive)
         {
             fpsCamera.Priority = 20;// FPSカメラの優先度を上げて有効化
+            normalFollowingCanvas.gameObject.SetActive(false);
+            fpsCanvas.gameObject.SetActive(true);
             
             // LineRendererの色を透明に変更
             _lineRenderer.startColor = _transparentStartColor;
@@ -216,6 +220,9 @@ public class GameManager : MonoBehaviour
             fpsCamera.Priority = 5; // FPSカメラの優先度を下げて無効化
             _lineRenderer.startColor = _originalStartColor;//色を元に戻す
             _lineRenderer.endColor = _originalEndColor;
+            
+            fpsCanvas.gameObject.SetActive(false);
+            normalFollowingCanvas.gameObject.SetActive(true);
         }
     }
     
