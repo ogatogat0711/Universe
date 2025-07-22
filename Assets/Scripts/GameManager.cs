@@ -3,7 +3,7 @@ using System.Collections;
 using TMPro;
 using Unity.Cinemachine;
 using Unity.Properties;
-using UnityEditor.SceneManagement;
+//using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;

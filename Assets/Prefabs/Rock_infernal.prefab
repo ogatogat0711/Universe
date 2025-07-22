@@ -287,7 +287,7 @@ Transform:
   m_GameObject: {fileID: 7080494915540533875}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.09357, y: 0, z: -23.81015}
+  m_LocalPosition: {x: 14.52, y: -2.22, z: -35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -395,8 +395,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   hp: 5
-  meteorRoot: {fileID: 0}
   maxDistance: 60
+  explosionPrefab: {fileID: 2637536756675952414, guid: f1b9a660d19c9064da03f3dfcc5b662c, type: 3}
 --- !u!1 &8365473997177520675
 GameObject:
   m_ObjectHideFlags: 0

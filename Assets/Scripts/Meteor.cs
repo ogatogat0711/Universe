@@ -8,9 +8,11 @@ public class Meteor : MonoBehaviour
     public int hp;
     private Transform _probe;
     public int maxDistance;
+    public GameObject explosionPrefab;
 
     void Start()
     {
+        UnityEngine.Random.InitState(DateTime.Now.Millisecond);
         _probe = GameObject.FindGameObjectWithTag("Probe").transform;
     }
     
@@ -33,9 +35,13 @@ public class Meteor : MonoBehaviour
         if (other.gameObject.CompareTag("Shot"))
         {
             Shot shot = other.gameObject.GetComponent<Shot>();
-            hp -= shot.attack;
+            
+            GameObject explosion = Instantiate(explosionPrefab, shot.transform.position, Quaternion.identity); // 爆発エフェクトを生成
             
             Destroy(shot.gameObject);
+            Destroy(explosion,2f);
+            
+            hp -= shot.attack;
         }
     }
 }

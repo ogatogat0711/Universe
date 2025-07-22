@@ -395,8 +395,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 7
   hp: 2
-  probe: {fileID: 0}
   maxDistance: 50
+  explosionPrefab: {fileID: 2637536756675952414, guid: f1b9a660d19c9064da03f3dfcc5b662c, type: 3}
 --- !u!1 &4947521183187926825
 GameObject:
   m_ObjectHideFlags: 0
