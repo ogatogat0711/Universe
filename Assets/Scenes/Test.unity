@@ -1001,7 +1001,7 @@ GameObject:
   - component: {fileID: 988841296}
   - component: {fileID: 988841295}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonForInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2042,6 +2042,7 @@ MonoBehaviour:
   yField: {fileID: 1495380093}
   zField: {fileID: 132968428}
   errorText: {fileID: 2113569745}
+  mainCamera: {fileID: 1749475627}
 --- !u!4 &1554142726
 Transform:
   m_ObjectHideFlags: 0
@@ -2527,9 +2528,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Submit
-
-'
+  m_text: Input
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

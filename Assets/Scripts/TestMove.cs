@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -10,19 +11,37 @@ public class TestMove : MonoBehaviour
     public TMP_Text errorText;
     private Vector3 _inputVector;
     private bool _needToRotate;
+    private float _vertical;
+    private float _horizontal;
+    public Camera mainCamera;
+    private bool _didOnceSendMessage;
 
     void Start()
     {
         _inputVector = testObject.transform.position;
         _needToRotate = false;
+        _vertical = 0f;
+        _horizontal = 0f;
+        _didOnceSendMessage = false;
     }
     void Update()
     {
         Debug.DrawRay(testObject.transform.position, testObject.transform.forward * 10, Color.blue);
         Debug.DrawRay(testObject.transform.position, _inputVector.normalized * 10, Color.red);
+        
+        _vertical = Input.GetAxis("Vertical");
+        _horizontal = Input.GetAxis("Horizontal");
+
+        if (_vertical != 0f || _horizontal != 0f)
+        {
+            _inputVector = mainCamera.transform.forward;//向かう方向
+            
+        }
 
         if (_needToRotate)
         {
+            _didOnceSendMessage = false;
+            
             Quaternion nextRotation = Quaternion.RotateTowards(testObject.transform.rotation,
                 Quaternion.LookRotation(_inputVector), 50f * Time.deltaTime);
             
@@ -30,6 +49,13 @@ public class TestMove : MonoBehaviour
         }
 
         _needToRotate = CheckRotation(_inputVector);
+
+        if (!_didOnceSendMessage && !_needToRotate)
+        {
+            Debug.Log("Ready to Go Forward");
+            _didOnceSendMessage = true;
+        }
+        
     }
 
     public void OnClick()
@@ -65,7 +91,7 @@ public class TestMove : MonoBehaviour
         
         float angle = Vector3.Angle(testObject.transform.forward, headingDirection);
    
-        Debug.Log("angle: " + angle);
+        //Debug.Log("angle: " + angle);
         return angle > 0.5f; // 2度より大きいなら回転が必要とする
     }
 }
