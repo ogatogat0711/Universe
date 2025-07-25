@@ -4,15 +4,21 @@ using UnityEngine.Serialization;
 
 public class Probe : MonoBehaviour
 {
+    //public Transform probeHead;
     public float speed = 15f;
+    public float mouseSensitivity = 100f;
     private Rigidbody _rigidbody;
     private Vector3 _velocity;
     private float _horizontal;
     private float _vertical;
+    private float _mouseX;
+    private float _mouseY;
+    private float _pitch;
     private Vector3 _forwardDirection;
     private float _rotationSpeed = 50f;//回転速度
     //public Camera followingCamera;
     public CinemachineVirtualCameraBase followingVirtualCamera;
+    public CinemachineVirtualCameraBase fpsCamera; // FPSカメラ
     public GameObject collisionTarget;
     public bool canMove;//移動可能かどうかのフラグ
     public bool isManipulating; // 操作中かどうかのフラグ
@@ -23,6 +29,7 @@ public class Probe : MonoBehaviour
     public int fuelConsumptionRatioOfAutoMove = 1; // 自動移動時の燃料消費率
     private int _fuelConsumption; // 燃料消費量
     public bool isClear;//クリアしたかどうかのフラグ
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -32,6 +39,7 @@ public class Probe : MonoBehaviour
         isManipulating = false;
         isClear = false;
         _forwardDirection = transform.forward;
+        _pitch = 0f;
     }
 
     // Update is called once per frame
@@ -54,6 +62,7 @@ public class Probe : MonoBehaviour
                 isManipulating = false;
             }
             
+            
             _needToRotate = CheckRotation(_forwardDirection);//回転が必要かどうかをチェック
 
             if (_needToRotate)
@@ -65,12 +74,26 @@ public class Probe : MonoBehaviour
             }
             
         }
+        else if (fpsCamera.IsLive) // FPSカメラがアクティブでいるとき
+        {
+            _mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+            _mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+
+            transform.Rotate(Vector3.up * _mouseX); // 水平方向の回転
+            
+            _pitch -= _mouseY;
+            _pitch = Mathf.Clamp(_pitch, -90f, 90f);
+
+            fpsCamera.transform.rotation = Quaternion.Euler(_pitch, transform.eulerAngles.y, 0f);
+        }
+        
         else
         {
             _horizontal = 0f;
             _vertical = 0f;
         }
     }
+    
 
     void FixedUpdate()
     {

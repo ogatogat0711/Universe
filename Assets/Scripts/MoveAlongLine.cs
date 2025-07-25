@@ -13,7 +13,7 @@ public class MoveAlongLine : MonoBehaviour
     public bool isMoving;//移動中かどうかのフラグ
     public bool wasFarAway;//曲線から離れたかどうかのフラグ
     public bool isRecovering;//曲線に復帰中かどうかのフラグ
-    public CinemachineVirtualCameraBase fpsCamera;
+    public CinemachineVirtualCameraBase followingCamera;
     
     public int currentIndex;
     public float nearLineTimer = 0f;
@@ -29,6 +29,7 @@ public class MoveAlongLine : MonoBehaviour
     void FixedUpdate()
     {
         if (!isEnableFollowing) return; //追従カメラが無効なときは何もしない
+        if (!followingCamera.IsLive) return;//fpsカメラがアクティブなときも何もしない
         
         var (minDistance, minIndex) = GetMinDistanceAndIndexFromLine();//現在位置から最も近い点までの距離とインデックスを取得
         if (!canAutoMove && wasFarAway)//離脱時
@@ -83,10 +84,6 @@ public class MoveAlongLine : MonoBehaviour
         
         if (isMoving && !wasFarAway)//自動航行中で非離脱時
         {
-            if (fpsCamera.IsLive)
-            {
-                return;//fpsのときは何もしない
-            }
             
             if (currentIndex >= drawLine.positionCount - 1)//インデックスが最後の点に達したとき
             {

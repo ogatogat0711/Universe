@@ -23,19 +23,10 @@ public class DrawLine : MonoBehaviour
 
     void Update()
     {
-        // UI要素の上でマウスがクリックされている場合、描画を無効化
-        if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                IsDrawing = false;
-            }
-            return;
-        }
         
-        if (Input.GetMouseButtonDown(0) && upperVirtualCamera.IsLive)
+        if (Input.GetMouseButtonDown(0) && upperVirtualCamera.IsLive && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
         {
-            // 左クリックが押されている間、描画を開始.ただし,上方カメラの時のみ
+            // 左クリックとCtrlキーが押されている間、描画を開始.ただし,上方カメラの時のみ
             IsDrawing = true;
             _positionCount= 0; // 点の数をリセット
             lineRenderer.positionCount = _positionCount;

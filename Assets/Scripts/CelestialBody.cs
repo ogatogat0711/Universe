@@ -17,7 +17,7 @@ public class CelestialBody : MonoBehaviour
     
     public bool isGravitation;//万有引力を作用するかのフラグ
     public float gravitationCoefficient = 1f;//万有引力の係数(GmM)
-    public GameObject gravitationTargetObject;//万有引力を作用するオブジェクト
+    public Probe gravitationTargetObject;//万有引力を作用するオブジェクト
     private Rigidbody _gravitationTarget;//作用先
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -35,7 +35,7 @@ public class CelestialBody : MonoBehaviour
             transform.position = orbitalCentralPos + new Vector3(x, 0, z);//該当天体の初期値
         }
 
-        _gravitationTarget = gravitationTargetObject.GetComponent<Rigidbody>();
+        _gravitationTarget = gravitationTargetObject.gameObject.GetComponent<Rigidbody>();
 
     }
 
@@ -61,7 +61,7 @@ public class CelestialBody : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isGravitation)
+        if (isGravitation && !gravitationTargetObject.fpsCamera.IsLive)
         {
             Vector3 gravityDirection = transform.position - _gravitationTarget.transform.position;//万有引力の作用方向のベクトル
             float distanceSquared = Mathf.Pow(gravityDirection.magnitude, 2.0f); //ベクトルの大きさの2乗

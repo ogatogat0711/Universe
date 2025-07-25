@@ -6,6 +6,7 @@ using Unity.Properties;
 //using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -15,6 +16,7 @@ public class GameManager : MonoBehaviour
     public bool isDebugMode = false; // デバッグモードのフラグ
     private GameObject[] _celestialBodies;
     public Probe probe;
+    public Camera mainCamera; // メインカメラ
     //public Camera upperCamera; // 上方カメラ
     public CinemachineVirtualCameraBase upperVirtualCamera; // 上方カメラの仮想カメラ
     //public Camera followingCamera; // 追従カメラ
@@ -53,6 +55,10 @@ public class GameManager : MonoBehaviour
     private Color _originalEndColor;// LineRendererの終了点の元の色
     private Color _transparentStartColor;// LineRendererの開始点の透明色
     private Color _transparentEndColor;// LineRendererの終了点の透明色
+
+    // public PlayableDirector toFpsDirector;//FPSカメラに切り替えたときのアニメーション
+    // public PlayableDirector toFollowingDirector;//追従カメラに切り替えたときのアニメーション
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -94,6 +100,10 @@ public class GameManager : MonoBehaviour
         
         _transparentStartColor = new Color(_originalStartColor.r, _originalStartColor.g, _originalStartColor.b, 0f);
         _transparentEndColor = new Color(_originalEndColor.r, _originalEndColor.g, _originalEndColor.b, 0f);
+        
+        // toFpsDirector.Stop();
+        // toFollowingDirector.Stop();
+        
         //navigationForUpper.navigationText.text = "";
         //navigationForUpper.ShowMessage("マウスを使って予定航路を描きましょう！\n");
         //navigationForFollowing.enabled = false;
@@ -103,13 +113,9 @@ public class GameManager : MonoBehaviour
     {
         yield return null;//1フレーム待機（ProbeのTransformが初期化されるのを待つ）
         
-        followingVirtualCamera.Follow = probe.transform; // 追従カメラのターゲットを設定
-        fpsCamera.Follow = probe.transform;
-        
         upperVirtualCamera.Priority = 10;
         followingVirtualCamera.Priority = 0;
         fpsCamera.Priority = 0;
-        
     }
 
     void Update()
@@ -117,11 +123,12 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C) && followingVirtualCamera.IsLive)
         {
             // Cキーが押されたとき、FPSカメラに切り替え
-            fpsCamera.Priority = 20;// FPSカメラの優先度を上げて有効化
+            fpsCamera.Priority = 20;
             
-            // LineRendererの色を透明に変更
             _lineRenderer.startColor = _transparentStartColor;
             _lineRenderer.endColor = _transparentEndColor;
+
+            // StartCoroutine(ChangeCameraToFps());
             
             normalFollowingCanvas.gameObject.SetActive(false);
             fpsCanvas.gameObject.SetActive(true);
@@ -132,17 +139,58 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.C) && fpsCamera.IsLive)
         {
             // Cキーが離されたとき、追従カメラに切り替え
-            fpsCamera.Priority = 5; // FPSカメラの優先度を下げて無効化
-            
-            _lineRenderer.startColor = _originalStartColor;//色を元に戻す
+            fpsCamera.Priority = 5;
+
+            _lineRenderer.startColor = _originalStartColor;
             _lineRenderer.endColor = _originalEndColor;
+            
+            // StartCoroutine(ChangeCameraToFollow());
             
             fpsCanvas.gameObject.SetActive(false);
             normalFollowingCanvas.gameObject.SetActive(true);
             
             probe.canMove = true;//操作を有効化
         }
+
+        if (upperVirtualCamera.IsLive)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition); // マウス位置からレイを発射
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit))
+                {
+                    Debug.Log(hit.collider.gameObject.name);
+                }
+            }
+        }
     }
+
+    // IEnumerator ChangeCameraToFps()
+    // {
+    //     Time.timeScale = 0;
+    //     toFpsDirector.Play();// FPSカメラのアニメーションを再生
+    //     fpsCamera.Priority = 20;
+    //     Time.timeScale = 1;
+    //     
+    //
+    //     yield return null;
+    // }
+
+    // IEnumerator ChangeCameraToFollow()
+    // {
+    //     Time.timeScale = 0;
+    //     toFollowingDirector.Play();// 追従カメラのアニメーションを再生
+    //     fpsCamera.Priority = 5;
+    //     Time.timeScale = 1;
+    //     
+    //     _lineRenderer.startColor = _originalStartColor;//色を元に戻す
+    //     _lineRenderer.endColor = _originalEndColor;
+    //     
+    //     yield return null;
+    // }
+    
 
     // Update is called once per frame
     void FixedUpdate()
@@ -235,12 +283,7 @@ public class GameManager : MonoBehaviour
             _isPlaying = false;
             Clear();
         }
-
-        if (followingVirtualCamera.IsLive)
-        {
-            fpsCamera.transform.rotation = followingVirtualCamera.transform.rotation; // 追従カメラの向きをFPSカメラに反映
-        }
-
+        
         
     }
     
