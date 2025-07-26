@@ -267,6 +267,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 13400000, guid: b91b3c3d6bbf084438a83887e3375520, type: 2}
     - target: {fileID: 4733398158900376935, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: m_Mass
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4733398158900376935, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
       propertyPath: m_Constraints
       value: 112
       objectReference: {fileID: 0}
@@ -1504,9 +1508,10 @@ MonoBehaviour:
   fpsCamera: {fileID: 1317323096}
   mainCamera: {fileID: 1330725374}
   probe: {fileID: 314491265}
-  distanceFromProbe: 15
+  distanceFromProbe: 25
   spawnInterval: 3
   transferInterval: 15
+  numberOfMeteors: 3
   meteorParent: {fileID: 662762931}
   isSpawning: 0
 --- !u!1 &662762930

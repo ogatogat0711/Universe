@@ -29,6 +29,7 @@ public class Probe : MonoBehaviour
     public int fuelConsumptionRatioOfAutoMove = 1; // 自動移動時の燃料消費率
     private int _fuelConsumption; // 燃料消費量
     public bool isClear;//クリアしたかどうかのフラグ
+    public float damagePercentage;//損害率
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,6 +41,7 @@ public class Probe : MonoBehaviour
         isClear = false;
         _forwardDirection = transform.forward;
         _pitch = 0f;
+        damagePercentage = 0f;
     }
 
     // Update is called once per frame
@@ -103,8 +105,12 @@ public class Probe : MonoBehaviour
             Vector3 cameraDirection= followingVirtualCamera.transform.forward;//カメラの見ている方向からXZ平面の単位ベクトルを取得
             Vector3 moveDirection = cameraDirection * _vertical + transform.right * _horizontal;//キー入力から移動方向を決定
             moveDirection *= Time.fixedDeltaTime;
+
+            if (_vertical != 0f || _horizontal != 0f)
+            {
+                ResetInertia();//慣性をリセット
+            }
             
-            ResetInertia();//慣性をリセット
             _rigidbody.linearVelocity = moveDirection * speed;
             
             Debug.Log("current velocity: " + _rigidbody.linearVelocity);

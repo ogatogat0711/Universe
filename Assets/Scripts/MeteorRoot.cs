@@ -14,6 +14,7 @@ public class MeteorRoot : MonoBehaviour
     public int distanceFromProbe = 20;//Probeからの距離
     public float spawnInterval = 5f; // 隕石生成の間隔
     public float transferInterval = 10f; // 生成位置変更の間隔
+    public int numberOfMeteors = 6; // 一度に生成する隕石の数の最大値
     private float _spawnTimer;//生成のタイマー
     private float _positionTransferTimer;//生成位置変更のタイマー 
     public Transform meteorParent;
@@ -53,7 +54,7 @@ public class MeteorRoot : MonoBehaviour
             
             if (_spawnTimer >= spawnInterval)
             {
-                int spawnCount = UnityEngine.Random.Range(1, 7); // 1〜6個の隕石をランダムに生成
+                int spawnCount = UnityEngine.Random.Range(1, numberOfMeteors + 1); // 1〜numberOfMeteors個の隕石をランダムに生成
                 Vector3 spawnDirection = probe.transform.position - transform.position; // Probeに向かう方向を取得
                 spawnDirection.Normalize();
                 StartCoroutine(SpawnMeteors(spawnCount, spawnDirection));
