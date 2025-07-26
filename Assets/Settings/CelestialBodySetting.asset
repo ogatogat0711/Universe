@@ -13,10 +13,24 @@ MonoBehaviour:
   m_Name: CelestialBodySetting
   m_EditorClassIdentifier: 
   dataList:
-  - bodyName: 
+  - bodyName: Sun
     isSpinOrbital: 0
     orbitalCentralObject: {fileID: 0}
     orbitalRadius: 0
     orbitalCycle: 0
     isSpinItself: 0
-    gravitationCoefficient: 0
+    gravitationCoefficient: 2000
+  - bodyName: Earth
+    isSpinOrbital: 1
+    orbitalCentralObject: {fileID: 6475975512850453783, guid: ad42918de319fdd4f93ed7bc7b20a504, type: 3}
+    orbitalRadius: 25
+    orbitalCycle: 27
+    isSpinItself: 1
+    gravitationCoefficient: 30
+  - bodyName: Moon
+    isSpinOrbital: 1
+    orbitalCentralObject: {fileID: 8714945580767714052, guid: e7f1acdd1f7a73248952c41edeb07ae4, type: 3}
+    orbitalRadius: 5
+    orbitalCycle: 30
+    isSpinItself: 1
+    gravitationCoefficient: 2

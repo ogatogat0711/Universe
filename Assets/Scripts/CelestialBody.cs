@@ -19,6 +19,8 @@ public class CelestialBody : MonoBehaviour
     public float gravitationCoefficient = 1f;//万有引力の係数(GmM)
     public Probe gravitationTargetObject;//万有引力を作用するオブジェクト
     private Rigidbody _gravitationTarget;//作用先
+
+    public string type;//天体の種類（惑星、衛星、恒星など）
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -72,5 +74,21 @@ public class CelestialBody : MonoBehaviour
             _gravitationTarget.AddForce(gravityDirection.normalized * force, ForceMode.Force);//万有引力を作用
         }
         
+    }
+
+    public void SetData(CelestialBodyData data)
+    {
+        isSpinOrbital = data.isSpinOrbital;
+        if (isSpinOrbital)
+        {
+            orbitalCentralObject = data.orbitalCentralObject;
+            orbitalRadius = data.orbitalRadius;
+            orbitalCycle = data.orbitalCycle;
+        }
+
+        type = data.type;
+        isSpinItself = data.isSpinItself;
+
+        gravitationCoefficient = data.gravitationCoefficient;
     }
 }

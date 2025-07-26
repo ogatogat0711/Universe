@@ -14,6 +14,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public bool isDebugMode = false; // デバッグモードのフラグ
+    public CelestialBodySetting celestialBodySetting; // CelestialBodyのデータリスト
     private GameObject[] _celestialBodies;
     public Probe probe;
     public Camera mainCamera; // メインカメラ
@@ -73,6 +74,17 @@ public class GameManager : MonoBehaviour
         foreach (var cb in _celestialBodies)
         {
             CelestialBody celestialBody = cb.GetComponent<CelestialBody>();
+            var data = celestialBodySetting.GetDataByName(cb.name);
+
+            if (data != null)
+            {
+                celestialBody.SetData(data);
+            }
+            else
+            {
+                Debug.Log("CelestialBody data not found for: " + cb.name);
+            }
+            
             celestialBody.isGravitation = false;//最初は万有引力を無効化
             if (celestialBody.isSpinOrbital)
             {

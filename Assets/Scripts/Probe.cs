@@ -113,7 +113,7 @@ public class Probe : MonoBehaviour
             
             _rigidbody.linearVelocity = moveDirection * speed;
             
-            Debug.Log("current velocity: " + _rigidbody.linearVelocity);
+            //Debug.Log("current velocity: " + _rigidbody.linearVelocity);
             _fuelConsumption = Mathf.RoundToInt(Mathf.Abs(_horizontal) + Mathf.Abs(_vertical));
             _fuelConsumption *= fuelConsumptionRatioOfManipulation; // 燃料消費量を計算
             fuel -= _fuelConsumption;
