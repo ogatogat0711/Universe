@@ -210,6 +210,14 @@ PrefabInstance:
       propertyPath: fpsCamera
       value: 
       objectReference: {fileID: 1317323096}
+    - target: {fileID: 1096990229014664455, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: moveSpeed
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1096990229014664455, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: followingCamera
+      value: 
+      objectReference: {fileID: 2114056970}
     - target: {fileID: 2341288516143848578, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5
@@ -253,6 +261,22 @@ PrefabInstance:
     - target: {fileID: 3113743454442931768, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
       propertyPath: m_Name
       value: Probe
+      objectReference: {fileID: 0}
+    - target: {fileID: 3724403536853756071, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: b91b3c3d6bbf084438a83887e3375520, type: 2}
+    - target: {fileID: 4733398158900376935, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
+    - target: {fileID: 4733398158900376935, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: m_Interpolate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4733398158900376935, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5100339361427401665, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -298,6 +322,10 @@ PrefabInstance:
       propertyPath: collisionTarget
       value: 
       objectReference: {fileID: 2076196308}
+    - target: {fileID: 9062279957755082953, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: mouseSensitivity
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 9062279957755082953, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
       propertyPath: followingVirtualCamera
       value: 
@@ -976,11 +1004,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &314491263 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3113743454442931768, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
-  m_PrefabInstance: {fileID: 89174322}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &314491264 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2341288516143848578, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
@@ -991,7 +1014,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9062279957755082953, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
   m_PrefabInstance: {fileID: 89174322}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 314491263}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d8be35636cb93e4fab299c1a0d59728, type: 3}
@@ -2605,7 +2628,7 @@ MonoBehaviour:
   simulationSpeed: 0.01
   isGravitation: 1
   gravitationCoefficient: 1
-  gravitationTargetObject: {fileID: 314491263}
+  gravitationTargetObject: {fileID: 314491265}
 --- !u!1 &1317323092
 GameObject:
   m_ObjectHideFlags: 0
@@ -3018,7 +3041,7 @@ MonoBehaviour:
   simulationSpeed: 0.01
   isGravitation: 0
   gravitationCoefficient: 1250
-  gravitationTargetObject: {fileID: 314491263}
+  gravitationTargetObject: {fileID: 314491265}
 --- !u!1 &1521550410
 GameObject:
   m_ObjectHideFlags: 0
@@ -4291,7 +4314,7 @@ MonoBehaviour:
   simulationSpeed: 0.01
   isGravitation: 1
   gravitationCoefficient: 10
-  gravitationTargetObject: {fileID: 314491263}
+  gravitationTargetObject: {fileID: 314491265}
 --- !u!1 &2091872576
 GameObject:
   m_ObjectHideFlags: 0

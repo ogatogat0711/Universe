@@ -122,6 +122,9 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.C) && followingVirtualCamera.IsLive)
         {
+            //Probeの慣性をリセット
+            probe.ResetInertia();
+            
             // Cキーが押されたとき、FPSカメラに切り替え
             fpsCamera.Priority = 20;
             
@@ -138,6 +141,10 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.C) && fpsCamera.IsLive)
         {
+            //Probeの慣性をリセット&前方向を設定
+            probe.ResetInertia();
+            probe.SetForwardDirection(fpsCamera.transform.forward);
+            
             // Cキーが離されたとき、追従カメラに切り替え
             fpsCamera.Priority = 5;
 

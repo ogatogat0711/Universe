@@ -95,7 +95,9 @@ public class MoveAlongLine : MonoBehaviour
             Vector3 direction = (target - transform.position).normalized; //向かう方向
             direction *= Time.fixedDeltaTime;
             
+            _probe.ResetInertia();//Probeの慣性をリセット
             _rigidbody.AddForce(direction * moveSpeed);
+            // Debug.Log("given force: " + direction * moveSpeed);
 
             if (Vector3.Distance(transform.position, target) < _transferringDistance)//次のインデックスに進む距離を下回ったとき
             {

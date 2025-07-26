@@ -104,7 +104,10 @@ public class Probe : MonoBehaviour
             Vector3 moveDirection = cameraDirection * _vertical + transform.right * _horizontal;//キー入力から移動方向を決定
             moveDirection *= Time.fixedDeltaTime;
             
+            ResetInertia();//慣性をリセット
             _rigidbody.linearVelocity = moveDirection * speed;
+            
+            Debug.Log("current velocity: " + _rigidbody.linearVelocity);
             _fuelConsumption = Mathf.RoundToInt(Mathf.Abs(_horizontal) + Mathf.Abs(_vertical));
             _fuelConsumption *= fuelConsumptionRatioOfManipulation; // 燃料消費量を計算
             fuel -= _fuelConsumption;
@@ -128,5 +131,16 @@ public class Probe : MonoBehaviour
         //Debug.Log("theta: " + theta);
         
         return theta > 0.5f;//0.5度より大きければ回転する
+    }
+
+    public void ResetInertia()
+    {
+        _rigidbody.linearVelocity = Vector3.zero;
+        _rigidbody.angularVelocity = Vector3.zero;
+    }
+
+    public void SetForwardDirection(Vector3 direction)
+    {
+        _forwardDirection = direction;
     }
 }

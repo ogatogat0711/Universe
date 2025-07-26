@@ -43,5 +43,17 @@ public class Meteor : MonoBehaviour
             
             hp -= shot.attack;
         }
+        
+        else if (other.gameObject.CompareTag("Probe"))
+        {
+            Probe probe = other.gameObject.GetComponent<Probe>();
+            Rigidbody rb = probe.GetComponent<Rigidbody>();
+            
+            rb.AddForce(transform.forward * speed * speed, ForceMode.Impulse);
+            
+            GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity); // 爆発エフェクトを生成
+            //Destroy(this.gameObject);
+            Destroy(explosion, 2f); // 2秒後に爆発エフェクトを削除
+        }
     }
 }
