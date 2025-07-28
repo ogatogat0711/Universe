@@ -13,6 +13,15 @@ public class CelestialBodyData
     public float orbitalCycle;
     public bool isSpinItself;
     public float gravitationCoefficient;
+
+    public CelestialBodyData()
+    {
+        bodyName = "";
+        type = "";
+        isSpinOrbital = false;
+        isSpinItself = false;
+        gravitationCoefficient = 1.0f;
+    }
 }
 
 [CreateAssetMenu(fileName = "CelestialBodySetting", menuName = "Scriptable Objects/CelestialBodySetting")]

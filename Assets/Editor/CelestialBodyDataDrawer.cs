@@ -6,7 +6,7 @@ public class CelestialBodyDataDrawer : PropertyDrawer
 {
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        int lines = 3; //bodyName, isSpinOrbital, isSpinItself
+        int lines = 4; //bodyName, type, isSpinOrbital, isSpinItself
 
         SerializedProperty isSpinOrbitalProp = property.FindPropertyRelative("isSpinOrbital");
         if (isSpinOrbitalProp.boolValue)
@@ -29,6 +29,7 @@ public class CelestialBodyDataDrawer : PropertyDrawer
         Rect rect = new Rect(position.x, position.y, position.width, lineHeight);
         
         var bodyName= property.FindPropertyRelative("bodyName");
+        var type = property.FindPropertyRelative("type");
         var isSpinOrbital = property.FindPropertyRelative("isSpinOrbital");
         var orbitalCentralObject = property.FindPropertyRelative("orbitalCentralObject");
         var orbitalRadius = property.FindPropertyRelative("orbitalRadius");
@@ -37,6 +38,9 @@ public class CelestialBodyDataDrawer : PropertyDrawer
         var gravitationCoefficient = property.FindPropertyRelative("gravitationCoefficient");
 
         EditorGUI.PropertyField(rect, bodyName);
+        rect.y += lineHeight + padding;
+        
+        EditorGUI.PropertyField(rect, type);
         rect.y += lineHeight + padding;
         
         EditorGUI.PropertyField(rect, isSpinOrbital);

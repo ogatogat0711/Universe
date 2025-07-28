@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dataList:
   - bodyName: Sun
+    type: "\u9EC4\u8272\u77EE\u661F"
     isSpinOrbital: 0
     orbitalCentralObject: {fileID: 0}
     orbitalRadius: 0
@@ -21,16 +22,18 @@ MonoBehaviour:
     isSpinItself: 0
     gravitationCoefficient: 2000
   - bodyName: Earth
+    type: "\u60D1\u661F"
     isSpinOrbital: 1
     orbitalCentralObject: {fileID: 6475975512850453783, guid: ad42918de319fdd4f93ed7bc7b20a504, type: 3}
     orbitalRadius: 25
     orbitalCycle: 27
     isSpinItself: 1
-    gravitationCoefficient: 30
+    gravitationCoefficient: 50
   - bodyName: Moon
+    type: "\u885B\u661F"
     isSpinOrbital: 1
     orbitalCentralObject: {fileID: 8714945580767714052, guid: e7f1acdd1f7a73248952c41edeb07ae4, type: 3}
     orbitalRadius: 5
     orbitalCycle: 30
     isSpinItself: 1
-    gravitationCoefficient: 2
+    gravitationCoefficient: 10

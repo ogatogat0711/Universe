@@ -57,6 +57,9 @@ public class GameManager : MonoBehaviour
     private Color _transparentStartColor;// LineRendererの開始点の透明色
     private Color _transparentEndColor;// LineRendererの終了点の透明色
 
+    public InformationWindow infoWindow;
+    public GameObject guideForInformation;
+
     // public PlayableDirector toFpsDirector;//FPSカメラに切り替えたときのアニメーション
     // public PlayableDirector toFollowingDirector;//追従カメラに切り替えたときのアニメーション
     
@@ -112,6 +115,8 @@ public class GameManager : MonoBehaviour
         
         _transparentStartColor = new Color(_originalStartColor.r, _originalStartColor.g, _originalStartColor.b, 0f);
         _transparentEndColor = new Color(_originalEndColor.r, _originalEndColor.g, _originalEndColor.b, 0f);
+        
+        guideForInformation.SetActive(false);
         
         // toFpsDirector.Stop();
         // toFollowingDirector.Stop();
@@ -173,15 +178,37 @@ public class GameManager : MonoBehaviour
 
         if (upperVirtualCamera.IsLive)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (DrawLine.isDrawing) return;//描画中は何もしない
+            
+            //描画中じゃなければマウス位置にCelestialBodyがあるかどうかをチェック
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            
+            if (Physics.Raycast(ray, out hit))
             {
-                Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition); // マウス位置からレイを発射
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit))
+                // マウスの位置にCelestialBodyがある場合
+                if (hit.collider.CompareTag("CelestialBody"))
                 {
-                    Debug.Log(hit.collider.gameObject.name);
+                    // Debug.Log("Hit celestial body: " + hit.collider.gameObject.name);
+                    var cb = hit.collider.gameObject.GetComponent<CelestialBody>();
+                    // Debug.Log("GC of CelestialBody: "+ cb.gravitationCoefficient);
+                    var data = cb.GetCelestialBodyData();
+                    // Debug.Log(data.bodyName);
+                    
+                    infoWindow.SetInformation(data);
+                    guideForInformation.SetActive(true); //infoWindowのガイドを表示
+                    
+                    //QキーでinfoWindowを表示
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        infoWindow.ShowInfoWindow();
+                    }
                 }
+                
+            }
+            else
+            {
+                guideForInformation.SetActive(false);
             }
         }
     }
@@ -214,7 +241,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && !_didStartOnce && !DrawLine.IsDrawing)
+        if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && !_didStartOnce && !DrawLine.isDrawing)
         {
             startButton.interactable = true;// UIボタンを有効化
             if (Vector3.Distance(_mover.drawLine.GetPosition(_mover.drawLine.positionCount - 1) , probe.collisionTarget.transform.position) > probe.collisionTarget.transform.localScale.x)
@@ -236,7 +263,7 @@ public class GameManager : MonoBehaviour
         {
             startButton.interactable = false;
 
-            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.IsDrawing && _didDrawOnce)
+            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.isDrawing && _didDrawOnce)
             {
                 //navigationForUpper.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n"
                 //                                + "もう少し探査機の近傍から描いてみてください！");

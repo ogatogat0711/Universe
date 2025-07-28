@@ -14,7 +14,7 @@ public class DrawLine : MonoBehaviour
     private int _positionCount = 0;//点の数
     public int maxPositionCount = 90; // 最大点数
     private float _interval = 1f; // 点の間隔
-    public static bool IsDrawing; // 描画中かどうか
+    public static bool isDrawing; // 描画中かどうか
 
     private void Start()
     {
@@ -23,21 +23,22 @@ public class DrawLine : MonoBehaviour
 
     void Update()
     {
+        if (InformationWindow.isShowing) return;//infoWindow表示中はなにもしない
         
         if (Input.GetMouseButtonDown(0) && upperVirtualCamera.IsLive && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
         {
             // 左クリックとCtrlキーが押されている間、描画を開始.ただし,上方カメラの時のみ
-            IsDrawing = true;
+            isDrawing = true;
             _positionCount= 0; // 点の数をリセット
             lineRenderer.positionCount = _positionCount;
         }
         else if (Input.GetMouseButtonUp(0))
         {
             // 左クリックが離されたら描画を終了
-            IsDrawing = false;
+            isDrawing = false;
         }
 
-        if (IsDrawing)
+        if (isDrawing)
         {
             // 描画中の場合、マウスの位置を取得して点を追加
             Vector3 mousePosition = Input.mousePosition;
