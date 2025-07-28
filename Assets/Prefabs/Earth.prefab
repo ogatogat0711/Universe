@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3911675668734590048}
   - component: {fileID: 5908308165672870412}
   - component: {fileID: 6939240812682811157}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Earth
   m_TagString: CelestialBody
   m_Icon: {fileID: 0}
@@ -131,3 +131,4 @@ MonoBehaviour:
   isGravitation: 1
   gravitationCoefficient: 10
   gravitationTargetObject: {fileID: 0}
+  type: 

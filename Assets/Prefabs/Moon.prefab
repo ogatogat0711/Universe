@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2986367599254032908}
   - component: {fileID: 7744162817084125092}
   - component: {fileID: 7453210962163033266}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Moon
   m_TagString: CelestialBody
   m_Icon: {fileID: 0}
@@ -131,3 +131,4 @@ MonoBehaviour:
   isGravitation: 1
   gravitationCoefficient: 1
   gravitationTargetObject: {fileID: 0}
+  type: 

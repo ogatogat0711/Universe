@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2268155217139546954}
   - component: {fileID: 7823111162363784015}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 2014757886355617422}
   - component: {fileID: 319312738005429251}
   - component: {fileID: 7245777906491188804}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sun
   m_TagString: CelestialBody
   m_Icon: {fileID: 0}
@@ -229,3 +229,4 @@ MonoBehaviour:
   isGravitation: 0
   gravitationCoefficient: 1250
   gravitationTargetObject: {fileID: 0}
+  type: 

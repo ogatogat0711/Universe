@@ -57,8 +57,8 @@ public class GameManager : MonoBehaviour
     private Color _transparentStartColor;// LineRendererの開始点の透明色
     private Color _transparentEndColor;// LineRendererの終了点の透明色
 
-    public InformationWindow infoWindow;
-    public GameObject guideForInformation;
+    // public InformationWindow infoWindow;
+    // public GameObject guideForInformation;
 
     // public PlayableDirector toFpsDirector;//FPSカメラに切り替えたときのアニメーション
     // public PlayableDirector toFollowingDirector;//追従カメラに切り替えたときのアニメーション
@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
         _transparentStartColor = new Color(_originalStartColor.r, _originalStartColor.g, _originalStartColor.b, 0f);
         _transparentEndColor = new Color(_originalEndColor.r, _originalEndColor.g, _originalEndColor.b, 0f);
         
-        guideForInformation.SetActive(false);
+        // guideForInformation.SetActive(false);
         
         // toFpsDirector.Stop();
         // toFollowingDirector.Stop();
@@ -176,41 +176,41 @@ public class GameManager : MonoBehaviour
             probe.canMove = true;//操作を有効化
         }
 
-        if (upperVirtualCamera.IsLive)
-        {
-            if (DrawLine.isDrawing) return;//描画中は何もしない
-            
-            //描画中じゃなければマウス位置にCelestialBodyがあるかどうかをチェック
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            
-            if (Physics.Raycast(ray, out hit))
-            {
-                // マウスの位置にCelestialBodyがある場合
-                if (hit.collider.CompareTag("CelestialBody"))
-                {
-                    // Debug.Log("Hit celestial body: " + hit.collider.gameObject.name);
-                    var cb = hit.collider.gameObject.GetComponent<CelestialBody>();
-                    // Debug.Log("GC of CelestialBody: "+ cb.gravitationCoefficient);
-                    var data = cb.GetCelestialBodyData();
-                    // Debug.Log(data.bodyName);
-                    
-                    infoWindow.SetInformation(data);
-                    guideForInformation.SetActive(true); //infoWindowのガイドを表示
-                    
-                    //QキーでinfoWindowを表示
-                    if (Input.GetKeyDown(KeyCode.Q))
-                    {
-                        infoWindow.ShowInfoWindow();
-                    }
-                }
-                
-            }
-            else
-            {
-                guideForInformation.SetActive(false);
-            }
-        }
+        // if (upperVirtualCamera.IsLive)
+        // {
+        //     if (DrawLine.isDrawing) return;//描画中は何もしない
+        //     
+        //     //描画中じゃなければマウス位置にCelestialBodyがあるかどうかをチェック
+        //     Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        //     RaycastHit hit;
+        //     
+        //     if (Physics.Raycast(ray, out hit))
+        //     {
+        //         // マウスの位置にCelestialBodyがある場合
+        //         if (hit.collider.CompareTag("CelestialBody"))
+        //         {
+        //             // Debug.Log("Hit celestial body: " + hit.collider.gameObject.name);
+        //             var cb = hit.collider.gameObject.GetComponent<CelestialBody>();
+        //             // Debug.Log("GC of CelestialBody: "+ cb.gravitationCoefficient);
+        //             var data = cb.GetCelestialBodyData();
+        //             // Debug.Log(data.bodyName);
+        //             
+        //             infoWindow.SetInformation(data);
+        //             guideForInformation.SetActive(true); //infoWindowのガイドを表示
+        //             
+        //             //QキーでinfoWindowを表示
+        //             if (Input.GetKeyDown(KeyCode.Q))
+        //             {
+        //                 infoWindow.ShowInfoWindow();
+        //             }
+        //         }
+        //         
+        //     }
+        //     else
+        //     {
+        //         guideForInformation.SetActive(false);
+        //     }
+        // }
     }
 
     // IEnumerator ChangeCameraToFps()
