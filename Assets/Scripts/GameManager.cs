@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Net.Sockets;
 using TMPro;
 using Unity.Cinemachine;
 using Unity.Properties;
@@ -24,7 +25,8 @@ public class GameManager : MonoBehaviour
     public CinemachineVirtualCameraBase followingVirtualCamera; // 追従カメラの仮想カメラ
     public CinemachineVirtualCameraBase fpsCamera;
     public Button startButton; // UIボタン
-    public TMP_Text fuelText; // 燃料表示用のテキスト
+    public TMP_Text fuelTextForFollowing; // 燃料表示用のテキスト
+    public TMP_Text fuelTextForFPS;
     private MoveAlongLine _mover;
     public DrawLine draw;
     private LineRenderer _lineRenderer;
@@ -32,7 +34,8 @@ public class GameManager : MonoBehaviour
     private bool _didDrawOnce;//一回描画したかを管理するフラグ
     private bool _isPlaying;// ゲームがプレイ中かどうかのフラグ
     private bool _hasWarnedForHalfFuel; // 半分の燃料を警告したかどうかのフラグ
-    public Image fuelGauge;
+    public Image fuelGaugeForFollowing;
+    public Image fuelGaugeForFPS;
     public Image recoveryTimerGauge; // 復帰タイマーゲージ
     public TMP_Text timerText;// タイマー表示用のテキスト
     private int _timerMinutes; // タイマーの分
@@ -153,7 +156,17 @@ public class GameManager : MonoBehaviour
             normalFollowingCanvas.gameObject.SetActive(false);
             fpsCanvas.gameObject.SetActive(true);
 
+            fuelTextForFPS.text = fuelTextForFollowing.text;
+            fuelGaugeForFPS.fillAmount = fuelGaugeForFollowing.fillAmount;
+
             probe.canMove = false;//操作を無効化
+        }
+
+        if (Input.GetKey(KeyCode.C) && fpsCamera.IsLive)
+        {
+            probe.ResetInertia();
+            fuelTextForFPS.text = fuelTextForFollowing.text;
+            fuelGaugeForFPS.fillAmount = fuelGaugeForFollowing.fillAmount;
         }
 
         if (Input.GetKeyUp(KeyCode.C) && fpsCamera.IsLive)
@@ -300,8 +313,8 @@ public class GameManager : MonoBehaviour
 
         if (probe.fuel > 0 && _isPlaying)
         {
-            fuelText.text = probe.fuel.ToString();// 燃料を表示
-            fuelGauge.fillAmount = (float)probe.fuel / probe.maxFuel; // 燃料ゲージの更新
+            fuelTextForFollowing.text = probe.fuel.ToString();// 燃料を表示
+            fuelGaugeForFollowing.fillAmount = (float)probe.fuel / probe.maxFuel; // 燃料ゲージの更新
 
             if ((float)probe.fuel / probe.maxFuel < 0.5f && !_hasWarnedForHalfFuel)
             {
@@ -318,8 +331,8 @@ public class GameManager : MonoBehaviour
 
         if (probe.fuel <= 0 && _isPlaying)//燃料が0以下になったらゲームオーバー
         {
-            fuelText.text = "0";// 燃料を0に表示
-            fuelGauge.fillAmount = 0; // 燃料ゲージを0に更新
+            fuelTextForFollowing.text = "0";// 燃料を0に表示
+            fuelGaugeForFollowing.fillAmount = 0; // 燃料ゲージを0に更新
             _isPlaying = false;// ゲームプレイ中フラグをfalseにする
             GameOver();// ゲームオーバー処理を呼び出す
         }
@@ -375,7 +388,7 @@ public class GameManager : MonoBehaviour
         
         ChangeVirtualCamera(upperVirtualCamera, followingVirtualCamera); // 上方カメラの仮想カメラから追従カメラの仮想カメラに切り替え
 
-        fuelText.text = probe.maxFuel.ToString(); // 初期燃料を表示
+        fuelTextForFollowing.text = probe.maxFuel.ToString(); // 初期燃料を表示
         
     }
 
@@ -448,6 +461,13 @@ public class GameManager : MonoBehaviour
         int timeInSeconds = _timerMinutes * 60 + (int)_timerSeconds;
         int score = probe.fuel / probe.maxFuel * 1000;
         score += (10000 / timeInSeconds);
+
+        if (probe.damagePercentage > 0f)
+        {
+            clearResultText.text+="Damage:" + probe.damagePercentage.ToString("F1") + "%\n";
+            score -= (int)(probe.damagePercentage * 10); // 損害率に応じてスコアを減点
+            score = Math.Max(score, 0);//負の数になったらスコアは0にする
+        }
 
         clearResultText.text += "Score:" + score.ToString() + "\n";
     }

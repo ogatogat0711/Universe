@@ -55,11 +55,15 @@ public class Meteor : MonoBehaviour
             Vector3 relativeVelocity = rbOfMeteor.linearVelocity - rb.linearVelocity; // 相対速度を計算
 
             probe.damagePercentage += relativeVelocity.magnitude * rbOfMeteor.mass;//損害率を加算
-            Debug.Log("damage: " + probe.damagePercentage);
             
-            GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity); // 爆発エフェクトを生成
+            probe.Flash();
+            probe.uiFlasher.Flash();
+            
+            // Debug.Log("damage: " + probe.damagePercentage);
+            
+            // GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity); // 爆発エフェクトを生成
             //Destroy(this.gameObject);
-            Destroy(explosion, 2f); // 2秒後に爆発エフェクトを削除
+            // Destroy(explosion, 2f); // 2秒後に爆発エフェクトを削除
         }
     }
 }

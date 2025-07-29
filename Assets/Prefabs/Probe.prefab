@@ -160,7 +160,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 500
+  mouseSensitivity: 100
   followingVirtualCamera: {fileID: 0}
+  fpsCamera: {fileID: 0}
   collisionTarget: {fileID: 0}
   canMove: 0
   isManipulating: 0
@@ -169,6 +171,9 @@ MonoBehaviour:
   fuelConsumptionRatioOfManipulation: 3
   fuelConsumptionRatioOfAutoMove: 1
   isClear: 0
+  damagePercentage: 0
+  flashColor: {r: 1, g: 0, b: 0, a: 0.39215687}
+  flashDuration: 0.1
 --- !u!114 &1096990229014664455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,7 +194,7 @@ MonoBehaviour:
   isMoving: 0
   wasFarAway: 0
   isRecovering: 0
-  fpsCamera: {fileID: 0}
+  followingCamera: {fileID: 0}
   currentIndex: 0
   nearLineTimer: 0
   reenableAutoMoveTime: 3

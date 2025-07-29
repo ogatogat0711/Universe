@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -30,6 +32,17 @@ public class Probe : MonoBehaviour
     private int _fuelConsumption; // 燃料消費量
     public bool isClear;//クリアしたかどうかのフラグ
     public float damagePercentage;//損害率
+
+    [ColorUsage(true, true)] 
+    public Color flashColor;//点滅色
+    
+    public float flashDuration = 0.1f;//点滅間隔
+    private int _flashTimes = 3;//点滅回数
+    private Renderer _renderer;
+    private MaterialPropertyBlock _materialPropertyBlock;
+    private Coroutine _flashCoroutine;
+    public UIFlasher uiFlasher;
+    public TMP_Text damageText;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -42,6 +55,10 @@ public class Probe : MonoBehaviour
         _forwardDirection = transform.forward;
         _pitch = 0f;
         damagePercentage = 0f;
+        _renderer = GetComponentInChildren<Renderer>();
+        _materialPropertyBlock = new MaterialPropertyBlock();
+        damageText.text = "損害率\n";
+        damageText.gameObject.SetActive(false);//最初は非表示
     }
 
     // Update is called once per frame
@@ -93,6 +110,16 @@ public class Probe : MonoBehaviour
         {
             _horizontal = 0f;
             _vertical = 0f;
+        }
+
+        if (damagePercentage > 0f)
+        {
+            if(!damageText.gameObject.activeSelf) damageText.gameObject.SetActive(true);//非表示を戻す
+
+            Color color = Color.Lerp(Color.white, Color.darkRed, damagePercentage / 100f);
+            
+            damageText.text = "損害率:\n" + damagePercentage.ToString("F1") + "%";
+            damageText.color = color; // 色を損害率に応じて変化させる
         }
     }
     
@@ -148,5 +175,34 @@ public class Probe : MonoBehaviour
     public void SetForwardDirection(Vector3 direction)
     {
         _forwardDirection = direction;
+    }
+
+    public void Flash()
+    {
+        if (_flashCoroutine != null)
+        {
+            StopCoroutine(_flashCoroutine);
+        }
+
+        _flashCoroutine = StartCoroutine(FlashCoroutine());
+    }
+
+    private IEnumerator FlashCoroutine()
+    {
+        _renderer.GetPropertyBlock(_materialPropertyBlock);
+
+        for (int i = 0; i < _flashTimes; i++)
+        {
+            //色を変える
+            _materialPropertyBlock.SetColor("_Color", flashColor);
+            _renderer.SetPropertyBlock(_materialPropertyBlock);
+            yield return new WaitForSeconds(flashDuration);
+            
+            //元に戻す
+            _renderer.SetPropertyBlock(null);
+            yield return new WaitForSeconds(flashDuration);
+        }
+
+        _flashCoroutine = null;
     }
 }

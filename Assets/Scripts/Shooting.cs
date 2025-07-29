@@ -1,3 +1,4 @@
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -11,10 +12,12 @@ public class Shooting : MonoBehaviour
    public Transform shotParent; // 射撃の親オブジェクト
    private float _offsetForRoot = 0.75f;
    private float _shootingTimer;
+   public TMP_Text shootingInfo;
 
    void Start()
    {
       _shootingTimer = 0f;
+      shootingInfo.text = ": 射撃(消費燃料: " + shotPrefab.fuelConsumptionRatioOfShot + ")";
    }
    
    void FixedUpdate()
@@ -53,6 +56,7 @@ public class Shooting : MonoBehaviour
       shot.transform.SetParent(shotParent); // 射撃の親オブジェクトに設定
       Rigidbody rb = shot.GetComponent<Rigidbody>();
       rb.AddForce(direction * shot.speed, ForceMode.Impulse);
+      probe.fuel-= shot.fuelConsumptionRatioOfShot; //燃料消費
 
    }
 }

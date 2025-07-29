@@ -7,6 +7,7 @@ public class Shot : MonoBehaviour
     private Transform _probe;
     public int maxDistance;
     public float shotInterval;
+    public int fuelConsumptionRatioOfShot = 2;
 
     void Start()
     {
