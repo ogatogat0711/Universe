@@ -11,7 +11,8 @@ public class MeteorRoot : MonoBehaviour
     public CinemachineVirtualCameraBase fpsCamera;
     public Camera mainCamera;
     public Probe probe;
-    public int distanceFromProbe = 20;//Probeからの距離
+    public int initialDistanceFromProbe = 20;//Probeからの距離の初期設定
+    private float _distanceFromProbe; // Probeからの距離
     public float spawnInterval = 5f; // 隕石生成の間隔
     public float transferInterval = 10f; // 生成位置変更の間隔
     public int numberOfMeteors = 6; // 一度に生成する隕石の数の最大値
@@ -19,6 +20,7 @@ public class MeteorRoot : MonoBehaviour
     private float _positionTransferTimer;//生成位置変更のタイマー 
     public Transform meteorParent;
     public bool isSpawning;
+    public WarningIndicator warningIndicator;
 
     void Start()
     {
@@ -37,17 +39,17 @@ public class MeteorRoot : MonoBehaviour
 
             if (vCamera.IsLive)
             {
-                distanceFromProbe = 15;
+                _distanceFromProbe = initialDistanceFromProbe;
             }
             else if (fpsCamera.IsLive)
             {
-                distanceFromProbe = 20;
+                _distanceFromProbe = initialDistanceFromProbe + 10f;
             }
             
             if (_positionTransferTimer >= transferInterval)
             {
                 Vector3 cameraDirection = mainCamera.transform.forward;
-                Vector3 rootPosition = probe.transform.position - cameraDirection * distanceFromProbe; // カメラの後方に生成位置を設定
+                Vector3 rootPosition = probe.transform.position - cameraDirection * _distanceFromProbe; // カメラの後方に生成位置を設定
                 transform.position = rootPosition;
                 _positionTransferTimer = 0f; // 生成位置変更のタイマーリセット
             }
@@ -74,6 +76,7 @@ public class MeteorRoot : MonoBehaviour
                 UnityEngine.Random.Range(-1f, 1f) // Z軸のオフセット
             );
             Meteor meteor = Instantiate(meteorPrefabs[index], transform.position + offset, Quaternion.identity);
+            warningIndicator.AddMeteor(meteor.gameObject);
             meteor.transform.SetParent(meteorParent); // MeteorをMeteorRootの子オブジェクトに設定
             Rigidbody rb = meteor.GetComponent<Rigidbody>();
             rb.AddForce(direction * meteor.speed, ForceMode.Impulse);//カメラの向いている方向に発射

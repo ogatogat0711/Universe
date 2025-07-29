@@ -324,6 +324,12 @@ public class GameManager : MonoBehaviour
             GameOver();// ゲームオーバー処理を呼び出す
         }
 
+        if (probe.damagePercentage >= 100f && _isPlaying)//損害率が100%以上になったらゲームオーバー
+        {
+            _isPlaying = false;
+            GameOver();
+        }
+
         if (probe.isClear && _isPlaying)
         {
             _isPlaying = false;

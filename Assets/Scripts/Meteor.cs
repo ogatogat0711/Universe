@@ -49,7 +49,13 @@ public class Meteor : MonoBehaviour
             Probe probe = other.gameObject.GetComponent<Probe>();
             Rigidbody rb = probe.GetComponent<Rigidbody>();
             
-            rb.AddForce(transform.forward * speed * speed, ForceMode.Impulse);
+            rb.AddForce(transform.forward * speed, ForceMode.Impulse);
+            
+            Rigidbody rbOfMeteor = GetComponent<Rigidbody>();
+            Vector3 relativeVelocity = rbOfMeteor.linearVelocity - rb.linearVelocity; // 相対速度を計算
+
+            probe.damagePercentage += relativeVelocity.magnitude * rbOfMeteor.mass;//損害率を加算
+            Debug.Log("damage: " + probe.damagePercentage);
             
             GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity); // 爆発エフェクトを生成
             //Destroy(this.gameObject);
