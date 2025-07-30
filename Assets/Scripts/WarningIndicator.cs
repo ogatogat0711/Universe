@@ -57,6 +57,11 @@ public class WarningIndicator : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.isPlaying)//プレイ終了したら全削除
+        {
+            entries.Clear();
+        }
+        
         for( int i = entries.Count - 1; i >= 0; i--)//途中で削除する可能性があるため逆順のfor利用
         {
             var e = entries[i];

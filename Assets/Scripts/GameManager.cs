@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     public DrawLine draw;
     private LineRenderer _lineRenderer;
     private bool _didDrawOnce;//一回描画したかを管理するフラグ
-    private bool _isPlaying;// ゲームがプレイ中かどうかのフラグ
+    public static bool isPlaying;// ゲームがプレイ中かどうかのフラグ
     private bool _hasWarnedForHalfFuel; // 半分の燃料を警告したかどうかのフラグ
     public TMP_Text currentStateText; // 現在の状態を表示するテキスト
     public Image fuelGaugeForFollowing;
@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
         
         _mover = probe.GetComponent<MoveAlongLine>();
         _didDrawOnce = false;
-        _isPlaying = true;
+        isPlaying = true;
         _hasWarnedForHalfFuel = false;
         
         _timerMinutes = 0; // タイマーの初期値
@@ -325,7 +325,7 @@ public class GameManager : MonoBehaviour
         
         }
 
-        if (probe.fuel > 0 && _isPlaying)
+        if (probe.fuel > 0 && isPlaying)
         {
             fuelTextForFollowing.text = probe.fuel.ToString();// 燃料を表示
             fuelGaugeForFollowing.fillAmount = (float)probe.fuel / probe.maxFuel; // 燃料ゲージの更新
@@ -343,23 +343,23 @@ public class GameManager : MonoBehaviour
             UpdateTimer();
         }
 
-        if (probe.fuel <= 0 && _isPlaying)//燃料が0以下になったらゲームオーバー
+        if (probe.fuel <= 0 && isPlaying)//燃料が0以下になったらゲームオーバー
         {
             fuelTextForFollowing.text = "0";// 燃料を0に表示
             fuelGaugeForFollowing.fillAmount = 0; // 燃料ゲージを0に更新
-            _isPlaying = false;// ゲームプレイ中フラグをfalseにする
+            isPlaying = false;// ゲームプレイ中フラグをfalseにする
             GameOver();// ゲームオーバー処理を呼び出す
         }
 
-        if (probe.damagePercentage >= 100f && _isPlaying)//損害率が100%以上になったらゲームオーバー
+        if (probe.damagePercentage >= 100f && isPlaying)//損害率が100%以上になったらゲームオーバー
         {
-            _isPlaying = false;
+            isPlaying = false;
             GameOver();
         }
 
-        if (probe.isClear && _isPlaying)
+        if (probe.isClear && isPlaying)
         {
-            _isPlaying = false;
+            isPlaying = false;
             Clear();
         }
         
