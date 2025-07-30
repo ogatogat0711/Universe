@@ -30,10 +30,10 @@ public class GameManager : MonoBehaviour
     private MoveAlongLine _mover;
     public DrawLine draw;
     private LineRenderer _lineRenderer;
-    private bool _didStartOnce;//一回スタートしたかを管理するフラグ
     private bool _didDrawOnce;//一回描画したかを管理するフラグ
     private bool _isPlaying;// ゲームがプレイ中かどうかのフラグ
     private bool _hasWarnedForHalfFuel; // 半分の燃料を警告したかどうかのフラグ
+    public TMP_Text currentStateText; // 現在の状態を表示するテキスト
     public Image fuelGaugeForFollowing;
     public Image fuelGaugeForFPS;
     public Image recoveryTimerGauge; // 復帰タイマーゲージ
@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
     private float _timerSeconds;// タイマーの秒
     private float _formerSeconds;// 前の秒数を保持する変数
     //public Navigation navigationForUpper; //上方カメラ用のナビゲーション
+    public TMP_Text upperNavigationText; // 上方カメラのナビゲーションテキスト
     //public Navigation navigationForFollowing; //追従カメラ用のナビゲーション
     public Canvas upperCanvas; // 上方カメラ用のCanvas
     public Canvas normalFollowingCanvas; // 通常表示用のCanvas
@@ -59,6 +60,8 @@ public class GameManager : MonoBehaviour
     private Color _originalEndColor;// LineRendererの終了点の元の色
     private Color _transparentStartColor;// LineRendererの開始点の透明色
     private Color _transparentEndColor;// LineRendererの終了点の透明色
+    
+    private Coroutine _showingMessageCoroutine;
 
     // public InformationWindow infoWindow;
     // public GameObject guideForInformation;
@@ -101,7 +104,6 @@ public class GameManager : MonoBehaviour
         probe.canMove = false;//最初は移動を無効化
         
         _mover = probe.GetComponent<MoveAlongLine>();
-        _didStartOnce = false;
         _didDrawOnce = false;
         _isPlaying = true;
         _hasWarnedForHalfFuel = false;
@@ -125,8 +127,11 @@ public class GameManager : MonoBehaviour
         // toFollowingDirector.Stop();
         
         //navigationForUpper.navigationText.text = "";
+        upperNavigationText.gameObject.SetActive(false);
         //navigationForUpper.ShowMessage("マウスを使って予定航路を描きましょう！\n");
         //navigationForFollowing.enabled = false;
+
+        _showingMessageCoroutine = null;
     }
 
     IEnumerator Start()
@@ -254,53 +259,62 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && !_didStartOnce && !DrawLine.isDrawing)
+        if (DrawLine.isDrawing) return;//描画中は何もしない
+        
+        if(!_didDrawOnce && _mover.drawLine.positionCount > 1) _didDrawOnce = true;
+        
+        if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && _didDrawOnce)
         {
-            startButton.interactable = true;// UIボタンを有効化
-            if (Vector3.Distance(_mover.drawLine.GetPosition(_mover.drawLine.positionCount - 1) , probe.collisionTarget.transform.position) > probe.collisionTarget.transform.localScale.x)
-            {  // 航路の終点がターゲットの半径より遠いとき
-                //navigationForUpper.ShowMessage("航路の終点が目標から遠いようです！\n"
-                //                        + "もう一回航路を見直すのを推奨します！\n");
-            }
-            else
-            {
-                //navigationForUpper.ShowMessage("準備はできましたか？\n"
-                //                       + "「スタート」ボタンを押して、出発しましょう！\n"
-                //                       + "この航路の最低消費燃料の理論値は"
-                //                       + _mover.drawLine.positionCount
-                //                       + "です");
-            }
+            if(!startButton.interactable)
+                startButton.interactable = true;
+
+            upperNavigationText.text = "右のGoボタンで航行開始です。→\n"
+                                       + "予定消費燃料は"
+                                       + _mover.drawLine.positionCount * probe.fuelConsumptionRatioOfAutoMove
+                                       + "です。";
             
+            ShowMessage(upperNavigationText,false);
         }
         else
         {
-            startButton.interactable = false;
-
-            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) > 1f && !DrawLine.isDrawing && _didDrawOnce)
+            if(startButton.interactable)
+                startButton.interactable = false;
+            if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) >= 1f && _didDrawOnce)
             {
-                //navigationForUpper.ShowMessage("予定航路の始点が探査機から遠いところにあるみたいです・・・\n"
-                //                                + "もう少し探査機の近傍から描いてみてください！");
+                upperNavigationText.text = "航路の始点があなたの探査機から少し遠いようです。\n"
+                                           + "探査機付近から航路を描いてください。";
+                ShowMessage(upperNavigationText,false);
             }
         }
 
         if (_mover.isMoving)
         { //自動航行中
-            //navigationForFollowing.ShowMessage("自動航行中です！\n");
+            currentStateText.text = "航行：自動\n";
+        }
+        else if (probe.isManipulating)
+        {
+            currentStateText.text = "航行：手動\n";
+        }
+        else
+        {
+            currentStateText.text = "航行：停止\n";
         }
 
         if (_mover.wasFarAway)
         {
             if (!_mover.canAutoMove)
             {
-                //navigationForFollowing.ShowMessage("予定航路から大きく離れました！\n"
-                //                                   + "直ちに手動操縦で予定航路に接近してください！\n"
-                //                                   + "(WASDキーで手動操縦)");
+                currentStateText.text += "航路から離脱\n";
             }
 
             else if (_mover.canAutoMove)
             {
-               // navigationForFollowing.ShowMessage("復帰準備完了です！\n"
-               //                                   + "(Rキーで自動航行に復帰)");
+                currentStateText.text += "復帰準備完了\n";
+            }
+
+            if (_mover.isRecovering)
+            {
+                currentStateText.text += "復帰中\n";
             }
 
             recoveryTimerGauge.gameObject.SetActive(_mover.isRecovering);
@@ -364,9 +378,7 @@ public class GameManager : MonoBehaviour
                 celestialBody.isSpinOrbital = true;//公転を有効化
             }
         }
-        
-        _didStartOnce = true;
-        
+
         _mover.canAutoMove = true;
         _mover.isMoving = true;
         _mover.currentIndex = 0;
@@ -419,6 +431,17 @@ public class GameManager : MonoBehaviour
         loadingSlider.gameObject.SetActive(true);
 
         StartCoroutine(WaitAndLoad(1, SceneManager.GetActiveScene().buildIndex)); // 1秒待ってからリトライ処理を開始
+    }
+
+    public void BackToTitle()
+    {
+        Time.timeScale = 1;
+        
+        loadingBackground.gameObject.SetActive(true);
+        loadingText.gameObject.SetActive(true);
+        loadingSlider.gameObject.SetActive(true);
+        
+        StartCoroutine(WaitAndLoad(1,0)); // 1秒待ってからタイトルシーンをロード
     }
 
     IEnumerator LoadScene(int sceneBuildIndex)
@@ -513,6 +536,39 @@ public class GameManager : MonoBehaviour
             timerText.text = _timerMinutes.ToString("00") + ":" + ((int)_timerSeconds).ToString("00");
         }
         _formerSeconds = _timerSeconds; // 前の秒数を更新
+    }
+
+    
+    private void ShowMessage(TMP_Text messageField, bool willDisappear, float duration)
+    {
+        //willDisappearがtrueならメッセージを表示してからduration経ってから消すCoroutineを開始
+        if (willDisappear)
+        {
+            messageField.gameObject.SetActive(true);
+
+            if (_showingMessageCoroutine == null)
+                _showingMessageCoroutine = StartCoroutine(HideMessage(messageField, duration));
+            else return;// すでにメッセージを表示している場合は何もしない
+
+        }
+        //falseならメッセージを表示するだけ
+        else if(!willDisappear && !messageField.gameObject.activeSelf)
+        {
+            messageField.gameObject.SetActive(true);
+        }
+    }
+    
+    private void ShowMessage(TMP_Text messageField, bool willDisappear)
+    {
+        if(!willDisappear && !messageField.gameObject.activeSelf)
+            messageField.gameObject.SetActive(true);//falseならメッセージを表示するだけ
+    }
+
+    private IEnumerator HideMessage(TMP_Text messageField, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        messageField.gameObject.SetActive(false);
+        _showingMessageCoroutine = null;
     }
 
 }

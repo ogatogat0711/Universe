@@ -25,6 +25,15 @@ public class TitleManager : MonoBehaviour
 
         StartCoroutine(WaitAndLoad(2,"SolarSystem"));
     }
+
+    public void Quit()
+    {
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // エディタでの実行停止
+        #else
+        Application.Quit(); // ビルド版でのアプリケーション終了
+        #endif
+    }
     
     IEnumerator LoadScene(string sceneName)
     {

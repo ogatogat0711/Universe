@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -5,12 +6,14 @@ using UnityEngine.UI;
 
 public class InformationWindow : MonoBehaviour
 {
+    public Probe probe;
     public GameObject infoWindow;
     public TMP_Text infoText;
     private CelestialBodyData _targetData;
     public static bool isShowing;//表示中かどうかのフラグ
-    // public PlayableDirector appearingDirector;//出現時アニメション
-    // public PlayableDirector disappearingDirector;//消失時アニメション
+    public Button closeButton;//閉じるボタン
+    public PlayableDirector appearingDirector;//出現時アニメション
+    public PlayableDirector disappearingDirector;//消失時アニメション
 
     void Start()
     {
@@ -18,8 +21,10 @@ public class InformationWindow : MonoBehaviour
         infoWindow.SetActive(false);
         _targetData = new CelestialBodyData();
         isShowing = false;
-        // appearingDirector.Stop();
-        // disappearingDirector.Stop();
+        appearingDirector.Stop();
+        disappearingDirector.Stop();
+        infoText.gameObject.SetActive(false);
+        closeButton.gameObject.SetActive(false);
     }
 
     public void SetInformation(CelestialBodyData data)
@@ -63,20 +68,45 @@ public class InformationWindow : MonoBehaviour
         {
             text += "極めて強い\n";
         }
+
+        if (_targetData.bodyName == probe.collisionTarget.name)
+        {
+            text += "今回の目標天体です\n";
+        }
         
         infoText.text = text;
     }
     
-    public void ShowInfoWindow()
+    public IEnumerator ShowInfoWindow()
     {
-        // appearingDirector.Play();
         infoWindow.SetActive(true);
+        appearingDirector.Play();
+        while (appearingDirector.state == PlayState.Playing)
+        {
+            yield return null;
+        }
+        
+        closeButton.gameObject.SetActive(true);
+        infoText.gameObject.SetActive(true);
         isShowing = true;
     }
-    
-    public void HideInfoWindow()
+
+    public void OnClickCloseButton()
     {
-        // disappearingDirector.Play();
+        StartCoroutine(HideInfoWindow());
+    }
+    
+    public IEnumerator HideInfoWindow()
+    {
+        infoText.gameObject.SetActive(false);
+        closeButton.gameObject.SetActive(false);
+        disappearingDirector.Play();
+        
+        while (disappearingDirector.state == PlayState.Playing)
+        {
+            yield return null;
+        }
+        
         infoWindow.SetActive(false);
         isShowing = false;
     }

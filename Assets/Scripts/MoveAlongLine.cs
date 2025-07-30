@@ -14,7 +14,7 @@ public class MoveAlongLine : MonoBehaviour
     public bool wasFarAway;//曲線から離れたかどうかのフラグ
     public bool isRecovering;//曲線に復帰中かどうかのフラグ
     public CinemachineVirtualCameraBase followingCamera;
-    
+    public GameObject recoveryGuide;
     public int currentIndex;
     public float nearLineTimer = 0f;
     public float reenableAutoMoveTime = 3f;
@@ -25,6 +25,7 @@ public class MoveAlongLine : MonoBehaviour
     {
         _probe = GetComponent<Probe>();
         _rigidbody = _probe.GetComponent<Rigidbody>();
+        recoveryGuide.SetActive(false);
     }
     void FixedUpdate()
     {
@@ -45,13 +46,14 @@ public class MoveAlongLine : MonoBehaviour
                     //Debug.Log("復帰可能");
                     canAutoMove = true;
                     isRecovering = false;
-                    
+                    recoveryGuide.SetActive(true);
                 }
             }
             else //曲線付近にいないとき
             {
                 nearLineTimer = 0f;
                 isRecovering = false;
+                recoveryGuide.SetActive(false);
             }
 
             return;
@@ -64,6 +66,7 @@ public class MoveAlongLine : MonoBehaviour
             nearLineTimer = 0f;
             wasFarAway = false;
             isMoving = true;
+            recoveryGuide.SetActive(false);
             //Debug.Log("復帰");
         }
 

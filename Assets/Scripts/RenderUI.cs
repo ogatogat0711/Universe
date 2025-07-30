@@ -39,8 +39,7 @@ public class RenderUI : MonoBehaviour
                         
                         if (Input.GetKeyDown(KeyCode.Q) && _lastHit != null)
                         {
-                            infoWindow.ShowInfoWindow();
-                            StartCoroutine(ShowInUI());
+                            StartCoroutine(Show());
                         }
                     }
                     
@@ -70,6 +69,12 @@ public class RenderUI : MonoBehaviour
        SetLayerRecursively(clone,LayerMask.NameToLayer("Celestial"));
         
         yield return null;
+    }
+
+    IEnumerator Show()
+    {
+        yield return infoWindow.ShowInfoWindow();
+        yield return ShowInUI();
     }
     
     void SetLayerRecursively(GameObject obj, int layer)
