@@ -15,6 +15,7 @@ public class TestMove : MonoBehaviour
     private float _horizontal;
     public Camera mainCamera;
     private bool _didOnceSendMessage;
+    public ParticleSystem leftSpark, rightSpark;
 
     void Start()
     {
@@ -23,6 +24,9 @@ public class TestMove : MonoBehaviour
         _vertical = 0f;
         _horizontal = 0f;
         _didOnceSendMessage = false;
+        
+        leftSpark.Stop();
+        rightSpark.Stop();
     }
     void Update()
     {
@@ -55,7 +59,17 @@ public class TestMove : MonoBehaviour
             Debug.Log("Ready to Go Forward");
             _didOnceSendMessage = true;
         }
-        
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            leftSpark.Play();
+            rightSpark.Play();
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            leftSpark.Stop();
+            rightSpark.Stop();
+        }
     }
 
     public void OnClick()

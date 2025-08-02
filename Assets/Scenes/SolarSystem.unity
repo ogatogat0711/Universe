@@ -244,6 +244,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 58776004}
   m_CullTransparentMesh: 1
+--- !u!198 &65630119 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7512567414552788375, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+  m_PrefabInstance: {fileID: 89174322}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &73493415
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,6 +433,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1317323096}
     - target: {fileID: 9062279957755082953, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: leftSpark
+      value: 
+      objectReference: {fileID: 426284882}
+    - target: {fileID: 9062279957755082953, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
       propertyPath: probeHead
       value: 
       objectReference: {fileID: 779697399}
@@ -439,6 +448,10 @@ PrefabInstance:
       propertyPath: damageText
       value: 
       objectReference: {fileID: 1341219223}
+    - target: {fileID: 9062279957755082953, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+      propertyPath: rightSpark
+      value: 
+      objectReference: {fileID: 65630119}
     - target: {fileID: 9062279957755082953, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
       propertyPath: collisionTarget
       value: 
@@ -1803,6 +1816,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 352351736}
   m_CullTransparentMesh: 1
+--- !u!198 &426284882 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3481203182795071827, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
+  m_PrefabInstance: {fileID: 89174322}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &454207498
 GameObject:
   m_ObjectHideFlags: 0
@@ -6404,7 +6422,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1731463141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7426,7 +7444,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1920855217
 MonoBehaviour:
   m_ObjectHideFlags: 0

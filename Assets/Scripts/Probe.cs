@@ -43,6 +43,7 @@ public class Probe : MonoBehaviour
     private Coroutine _flashCoroutine;
     public UIFlasher uiFlasher;
     public TMP_Text damageText;
+    public ParticleSystem leftSpark, rightSpark;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -59,6 +60,9 @@ public class Probe : MonoBehaviour
         _materialPropertyBlock = new MaterialPropertyBlock();
         damageText.text = "損害率\n";
         damageText.gameObject.SetActive(false);//最初は非表示
+        
+        leftSpark.Stop();
+        rightSpark.Stop();
     }
 
     // Update is called once per frame
@@ -136,6 +140,19 @@ public class Probe : MonoBehaviour
             if (_vertical != 0f || _horizontal != 0f)
             {
                 ResetInertia();//慣性をリセット
+            }
+
+            if (_vertical > 0f)
+            {
+                leftSpark.Play();
+                rightSpark.Play();
+            }
+            else
+            {
+                leftSpark.Stop();
+                rightSpark.Stop();
+
+                moveDirection *= 0.5f;//前進以外は速度を半減
             }
             
             _rigidbody.linearVelocity = moveDirection * speed;
