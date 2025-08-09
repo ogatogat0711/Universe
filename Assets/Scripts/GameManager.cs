@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Net.Sockets;
+using DG.Tweening;
 using TMPro;
 using Unity.Cinemachine;
 using Unity.Properties;
@@ -49,17 +50,26 @@ public class GameManager : MonoBehaviour
     public Canvas resultCanvas; // 結果表示用のCanvas
     public Canvas fpsCanvas;// FPSカメラ用のCanvas
     public TMP_Text gameOverText;
-    public TMP_Text gameOverResultText;
+    // public TMP_Text gameOverResultText;
     public TMP_Text clearText;
-    public TMP_Text clearResultText;
-    public Image loadingBackground;
-    public TMP_Text loadingText;
-    public Slider loadingSlider;
+    // public TMP_Text clearResultText;
+    public Image blackBackground;
+    // public TMP_Text loadingText;
+    // public Slider loadingSlider;
 
     private Color _originalStartColor;//LineRendererの開始点の元の色
     private Color _originalEndColor;// LineRendererの終了点の元の色
     private Color _transparentStartColor;// LineRendererの開始点の透明色
     private Color _transparentEndColor;// LineRendererの終了点の透明色
+
+    public int timeScoreInterval;
+
+    public enum GameOverType
+    {
+        Cleared,//クリア
+        RunOut,//燃料切れ
+        Devastated//損害率100%
+    }
     
     private Coroutine _showingMessageCoroutine;
 
@@ -348,19 +358,22 @@ public class GameManager : MonoBehaviour
             fuelTextForFollowing.text = "0";// 燃料を0に表示
             fuelGaugeForFollowing.fillAmount = 0; // 燃料ゲージを0に更新
             isPlaying = false;// ゲームプレイ中フラグをfalseにする
+            ResultParameters.gameOverType = GameOverType.RunOut;
             GameOver();// ゲームオーバー処理を呼び出す
         }
 
         if (probe.damagePercentage >= 100f && isPlaying)//損害率が100%以上になったらゲームオーバー
         {
             isPlaying = false;
+            ResultParameters.gameOverType = GameOverType.Devastated;
             GameOver();
         }
 
         if (probe.isClear && isPlaying)
         {
             isPlaying = false;
-            Clear();
+            ResultParameters.gameOverType = GameOverType.Cleared;
+            StartCoroutine(Clear());
         }
         
         
@@ -412,12 +425,12 @@ public class GameManager : MonoBehaviour
         upperCanvas.gameObject.SetActive(false);
         resultCanvas.gameObject.SetActive(true); // 結果表示用のCanvasを有効化
         
-        loadingBackground.gameObject.SetActive(false);
+        blackBackground.gameObject.SetActive(false);
         clearText.gameObject.SetActive(false);
-        clearResultText.gameObject.SetActive(false);
+        // clearResultText.gameObject.SetActive(false);
         
-        float distanceToTarget = Vector3.Distance(probe.transform.position, probe.collisionTarget.transform.position);
-        gameOverResultText.text += distanceToTarget.ToString("F2") + "万km\n";
+        // float distanceToTarget = Vector3.Distance(probe.transform.position, probe.collisionTarget.transform.position);
+        // gameOverResultText.text += distanceToTarget.ToString("F2") + "万km\n";
         
         //Debug.Log("Game Over");
     }
@@ -426,9 +439,9 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         
-        loadingBackground.gameObject.SetActive(true);
-        loadingText.gameObject.SetActive(true);
-        loadingSlider.gameObject.SetActive(true);
+        blackBackground.gameObject.SetActive(true);
+        // loadingText.gameObject.SetActive(true);
+        // loadingSlider.gameObject.SetActive(true);
 
         StartCoroutine(WaitAndLoad(1, SceneManager.GetActiveScene().buildIndex)); // 1秒待ってからリトライ処理を開始
     }
@@ -437,9 +450,9 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         
-        loadingBackground.gameObject.SetActive(true);
-        loadingText.gameObject.SetActive(true);
-        loadingSlider.gameObject.SetActive(true);
+        blackBackground.gameObject.SetActive(true);
+        // loadingText.gameObject.SetActive(true);
+        // loadingSlider.gameObject.SetActive(true);
         
         StartCoroutine(WaitAndLoad(1,0)); // 1秒待ってからタイトルシーンをロード
     }
@@ -451,7 +464,7 @@ public class GameManager : MonoBehaviour
         while (!async.isDone)
         {
             float progress = Mathf.Clamp01(async.progress / 0.9f);
-            loadingSlider.value = progress;
+            // loadingSlider.value = progress;
             
             yield return null;
         }
@@ -464,35 +477,53 @@ public class GameManager : MonoBehaviour
         yield return LoadScene(sceneBuildIndex); // シーンをロード
     }
 
-    private void Clear()
+    private IEnumerator Clear()
     {
         Time.timeScale = 0;
         normalFollowingCanvas.gameObject.SetActive(false);
         upperCanvas.gameObject.SetActive(false);
         resultCanvas.gameObject.SetActive(true); // 結果表示用のCanvasを有効化
         
-        loadingBackground.gameObject.SetActive(false);
+        blackBackground.gameObject.SetActive(true);
+        
+        clearText.gameObject.SetActive(true);
+        clearText.transform.DOScale(new Vector3(2, 2, 1), 0.5f).SetEase(Ease.OutCubic).SetUpdate(true);
+        clearText.rectTransform.DOAnchorPos(new Vector2(0f, 0f), 0.5f).SetEase(Ease.OutCubic).SetUpdate(true);
+        yield return new WaitForSecondsRealtime(2f);
         
         //clearText.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(false); // ゲームオーバーテキストを非表示
-        gameOverResultText.gameObject.SetActive(false);
+        // gameOverResultText.gameObject.SetActive(false);
         
         float fuelPercentage = (float)probe.fuel / probe.maxFuel * 100f;
-        clearResultText.text = "Time:" + _timerMinutes.ToString("00") + ":" + ((int)_timerSeconds).ToString("00") + "\n"
-                          + "Remaining Fuel:" + fuelPercentage.ToString("00") + "%\n";
+        ResultParameters.fuelPercentage = fuelPercentage;
+        // clearResultText.text = "Time:" + _timerMinutes.ToString("00") + ":" + ((int)_timerSeconds).ToString("00") + "\n"
+        //                   + "Remaining Fuel:" + fuelPercentage.ToString("00") + "%\n";
         
         int timeInSeconds = _timerMinutes * 60 + (int)_timerSeconds;
-        int score = probe.fuel / probe.maxFuel * 1000;
-        score += (10000 / timeInSeconds);
+        ResultParameters.time = timeInSeconds;
+        ResultParameters.timeScoreInterval = timeScoreInterval;
+        // int score = probe.fuel / probe.maxFuel * 1000;
+        // score += (10000 / timeInSeconds);
+        //
+        // if (probe.damagePercentage > 0f)
+        // {
+        //     clearResultText.text+="Damage:" + probe.damagePercentage.ToString("F1") + "%\n";
+        //     score -= (int)(probe.damagePercentage * 10); // 損害率に応じてスコアを減点
+        //     score = Math.Max(score, 0);//負の数になったらスコアは0にする
+        // }
 
-        if (probe.damagePercentage > 0f)
+        ResultParameters.damage = probe.damagePercentage;
+        ResultParameters.sceneName = SceneManager.GetActiveScene().name;
+
+        blackBackground.DOFade(255f,0.5f).SetEase(Ease.OutCubic).SetUpdate(true);// 背景をフェードイン
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        AsyncOperation async = SceneManager.LoadSceneAsync("ResultScene");
+        while (!async.isDone)
         {
-            clearResultText.text+="Damage:" + probe.damagePercentage.ToString("F1") + "%\n";
-            score -= (int)(probe.damagePercentage * 10); // 損害率に応じてスコアを減点
-            score = Math.Max(score, 0);//負の数になったらスコアは0にする
+            yield return null;
         }
-
-        clearResultText.text += "Score:" + score.ToString() + "\n";
     }
     
     private void ChangeCamera(Camera oldCamera, Camera newCamera)

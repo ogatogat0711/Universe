@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 216acaddfffc4502acde1a99d9c981b2
+timeCreated: 1751548851
+AssetOrigin:
+  serializedVersion: 1
+  productId: 296362
+  packageName: Procedural Celestial Body Materials
+  packageVersion: 2.1.0
+  assetPath: Assets/ParallelCascades/ProceduralCelestialBodyMaterials/PostProcessing/FullScreenMultiplePassesRendererFeature.cs
+  uploadId: 776440
