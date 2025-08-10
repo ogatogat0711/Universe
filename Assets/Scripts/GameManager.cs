@@ -359,14 +359,14 @@ public class GameManager : MonoBehaviour
             fuelGaugeForFollowing.fillAmount = 0; // 燃料ゲージを0に更新
             isPlaying = false;// ゲームプレイ中フラグをfalseにする
             ResultParameters.gameOverType = GameOverType.RunOut;
-            GameOver();// ゲームオーバー処理を呼び出す
+            StartCoroutine(GameOver());// ゲームオーバー処理を呼び出す
         }
 
         if (probe.damagePercentage >= 100f && isPlaying)//損害率が100%以上になったらゲームオーバー
         {
             isPlaying = false;
             ResultParameters.gameOverType = GameOverType.Devastated;
-            GameOver();
+            StartCoroutine(GameOver());
         }
 
         if (probe.isClear && isPlaying)
@@ -417,7 +417,7 @@ public class GameManager : MonoBehaviour
         
     }
 
-    private void GameOver()
+    private IEnumerator GameOver()
     {
         Time.timeScale = 0;
         
@@ -425,14 +425,30 @@ public class GameManager : MonoBehaviour
         upperCanvas.gameObject.SetActive(false);
         resultCanvas.gameObject.SetActive(true); // 結果表示用のCanvasを有効化
         
-        blackBackground.gameObject.SetActive(false);
+        blackBackground.gameObject.SetActive(true);
         clearText.gameObject.SetActive(false);
         // clearResultText.gameObject.SetActive(false);
+
+        ResultParameters.sceneName = SceneManager.GetActiveScene().name;
         
-        // float distanceToTarget = Vector3.Distance(probe.transform.position, probe.collisionTarget.transform.position);
+        float distanceToTarget = Vector3.Distance(probe.transform.position, probe.collisionTarget.transform.position);
+        ResultParameters.distance = distanceToTarget;
+        
+        gameOverText.gameObject.SetActive(true);
+        gameOverText.rectTransform.DOAnchorPos(new Vector2(0f, 0f), 1f).SetEase(Ease.InOutBounce).SetUpdate(true);
+        yield return new WaitForSecondsRealtime(2f);
         // gameOverResultText.text += distanceToTarget.ToString("F2") + "万km\n";
-        
+
         //Debug.Log("Game Over");
+        
+        blackBackground.DOFade(255f,0.5f).SetEase(Ease.OutCubic).SetUpdate(true);// 背景をフェードイン
+        yield return new WaitForSecondsRealtime(0.5f);
+        
+        AsyncOperation async = SceneManager.LoadSceneAsync("ResultScene");
+        while (!async.isDone)
+        {
+            yield return null;
+        }
     }
 
     public void Retry()

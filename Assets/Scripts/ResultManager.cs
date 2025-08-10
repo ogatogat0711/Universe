@@ -5,11 +5,13 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public static class ResultParameters
 {
-    public static GameManager.GameOverType gameOverType= GameManager.GameOverType.RunOut;
+    public static GameManager.GameOverType gameOverType;
+    public static float distance;
     public static int time;
     public static int timeScoreInterval;
     public static float fuelPercentage;
@@ -33,10 +35,15 @@ public class ResultManager : MonoBehaviour
     public Image resultPanel;
     public Image transitionPanel;
     public TMP_Text gameOverText;
+    public Image loadingBackground;
+    public Sprite[] loadingSprites;
+    public Image loadingGauge;
 
     void Awake()
     {
         Time.timeScale = 1;
+        
+        UnityEngine.Random.InitState(DateTime.Now.Millisecond);
         
         resultPanel.gameObject.SetActive(true);
         transitionPanel.gameObject.SetActive(true);
@@ -61,6 +68,8 @@ public class ResultManager : MonoBehaviour
         nextButton.gameObject.SetActive(false);
         
         gameOverText.gameObject.SetActive(false);
+        
+        loadingBackground.gameObject.SetActive(false);
     }
 
     IEnumerator Start()
@@ -162,20 +171,22 @@ public class ResultManager : MonoBehaviour
             gameOverText.gameObject.SetActive(true);
             gameOverText.text = ResultParameters.gameOverType switch
             {
-                GameManager.GameOverType.RunOut => "Your Probe has Run Out of Fuel...",
-                GameManager.GameOverType.Devastated => "Your Probe has been Devastated...",
+                GameManager.GameOverType.RunOut => "Your Probe has Run Out of Fuel...\n",
+                GameManager.GameOverType.Devastated => "Your Probe has been Devastated...\n",
                 _ => "Unknown Error"
             };
+
+            gameOverText.text += "目標までの距離：" + $"{ResultParameters.distance:F2}万km";
         }
         
     }
 
-    private void Update()
-    {
-        if (rateText.text == "B" || rateText.text == "C" || rateText.text == "D") return;//Bランク以下は何もしない
-        if (!rateText.gameObject.activeSelf) return; //レート非表示の時も何もしない
-        
-    }
+    // private void Update()
+    // {
+    //     if (rateText.text == "B" || rateText.text == "C" || rateText.text == "D") return;//Bランク以下は何もしない
+    //     if (!rateText.gameObject.activeSelf) return; //レート非表示の時も何もしない
+    //     
+    // }
 
     private void CountUp(int targetScore, TMP_Text targetScoreText, float duration)
     {
@@ -213,6 +224,26 @@ public class ResultManager : MonoBehaviour
     
     public void Retry()
     {
+        int spriteIndex = UnityEngine.Random.Range(0, loadingSprites.Length);
+        loadingBackground.sprite = loadingSprites[spriteIndex];
+        loadingBackground.gameObject.SetActive(true);
+
+        StartCoroutine(LoadScene(ResultParameters.sceneName));
+    }
+
+    private IEnumerator LoadScene(string sceneName)
+    {
+        AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
         
+        if (async == null)
+        {
+            throw new Exception("Failed to load scene");
+        }
+
+        while (!async.isDone)
+        {
+            loadingGauge.fillAmount = Mathf.Clamp01(async.progress / 0.9f);
+            yield return null;
+        }
     }
 }
