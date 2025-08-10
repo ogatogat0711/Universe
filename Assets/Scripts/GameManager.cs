@@ -377,7 +377,7 @@ public class GameManager : MonoBehaviour
     //UIボタンから呼び出されるメソッド
     public void StartMovingOfProbe()
     {
-        if (InformationWindow.needToWarn)
+        if (InformationWindow.needToWarn && !infoWindow.isCelestial)
         {
             infoWindow.MakeWarning();
             StartCoroutine(infoWindow.ShowInfoWindow());

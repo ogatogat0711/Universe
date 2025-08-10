@@ -1,4 +1,5 @@
 using System.Collections;
+using Coffee.UIExtensions;
 using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -12,6 +13,8 @@ public class UpperUiArrange : MonoBehaviour
     public RectTransform goalFlag;
     public Canvas upperCanvas;
     private Coroutine _arrowAnimationCoroutine;
+    public ShinyEffectForUGUI shine;
+    private float _shineTimer;
 
     void Start()
     {
@@ -35,6 +38,8 @@ public class UpperUiArrange : MonoBehaviour
         goalFlag.gameObject.SetActive(true);
 
         _arrowAnimationCoroutine = null;
+        
+        _shineTimer = 0f;
     }
 
     void Update()
@@ -44,6 +49,17 @@ public class UpperUiArrange : MonoBehaviour
         if (arrow.gameObject.activeSelf && _arrowAnimationCoroutine == null)
         {
             _arrowAnimationCoroutine = StartCoroutine(ArrowAnimation());
+        }
+
+        if (goalFlag.gameObject.activeSelf)
+        {
+            _shineTimer += Time.deltaTime;
+
+            if (_shineTimer >= 2f)
+            {
+                shine.Play(0.5f);
+                _shineTimer = 0f; // タイマーをリセット
+            }
         }
     }
 

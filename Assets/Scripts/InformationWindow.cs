@@ -12,6 +12,7 @@ public class InformationWindow : MonoBehaviour
     private CelestialBodyData _targetData;
     public static bool isShowing;//表示中かどうかのフラグ
     public static bool needToWarn;
+    public bool isCelestial;
     public Button closeButton;//閉じるボタン
     public RawImage celestialBodyImage;
     public PlayableDirector appearingDirector;//出現時アニメション
@@ -29,15 +30,16 @@ public class InformationWindow : MonoBehaviour
         closeButton.gameObject.SetActive(false);
         celestialBodyImage.gameObject.SetActive(false);
         needToWarn = false;
+        isCelestial = false;
     }
 
     public void SetInformation(CelestialBodyData data)
     {
-        if (_targetData.Equals(data))
-        {
-            // Debug.Log("This information is already set.");
-            return;
-        }
+        // if (_targetData.Equals(data))
+        // {
+        //     // Debug.Log("This information is already set.");
+        //     return;
+        // }
         _targetData = data;
         MakeDescription();
     }
@@ -80,6 +82,7 @@ public class InformationWindow : MonoBehaviour
         
         infoText.text = text;
         infoText.color = Color.white;
+        infoText.alignment = TextAlignmentOptions.Top;
     }
 
     public void MakeWarning()
@@ -88,6 +91,8 @@ public class InformationWindow : MonoBehaviour
                         + "描画しなおしてください。";
         
         infoText.color = Color.red;
+        infoText.alignment = TextAlignmentOptions.Center;
+        isCelestial = false;
     }
     
     public IEnumerator ShowInfoWindow()
@@ -101,7 +106,7 @@ public class InformationWindow : MonoBehaviour
         
         closeButton.gameObject.SetActive(true);
         infoText.gameObject.SetActive(true);
-        if (!needToWarn)
+        if (isCelestial)
         {
             celestialBodyImage.gameObject.SetActive(true);
         }

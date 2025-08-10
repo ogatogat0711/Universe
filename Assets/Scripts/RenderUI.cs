@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -36,6 +37,7 @@ public class RenderUI : MonoBehaviour
                     {
                         infoWindow.SetInformation(data);
                         guideForInformation.SetActive(true);
+                        infoWindow.isCelestial = true;
                         
                         if (Input.GetKeyDown(KeyCode.Q) && _lastHit != null)
                         {
