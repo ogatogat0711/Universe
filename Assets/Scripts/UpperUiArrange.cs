@@ -1,3 +1,5 @@
+using System.Collections;
+using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -9,11 +11,10 @@ public class UpperUiArrange : MonoBehaviour
     public RectTransform arrow;
     public RectTransform goalFlag;
     public Canvas upperCanvas;
+    private Coroutine _arrowAnimationCoroutine;
 
-    void Update()
+    void Start()
     {
-        if (!upperVirtualCamera.IsLive) return;//上方カメラではないときはなにもしない
-        
         Vector3 screenProbePosition = mainCamera.WorldToScreenPoint(probe.transform.position);
         Vector3 screenGoalPosition = mainCamera.WorldToScreenPoint(probe.collisionTarget.transform.position);
 
@@ -26,19 +27,34 @@ public class UpperUiArrange : MonoBehaviour
 
         uiProbePosition += Vector2.up * 100f;
         uiGoalPosition += Vector2.up * 100f;
-
-        float t = Mathf.PingPong(Time.time * 0.5f, 1f);
-        float yOffset = Mathf.Sin(t * Mathf.PI * 2f) * 15f;
-        
-        uiProbePosition.y += yOffset;// 上下に揺れる効果を追加
         
         arrow.anchoredPosition = uiProbePosition;
         goalFlag.anchoredPosition = uiGoalPosition;
         
-        if(!arrow.gameObject.activeSelf)
-            arrow.gameObject.SetActive(true);
-        
-        if(!goalFlag.gameObject.activeSelf)
-            goalFlag.gameObject.SetActive(true);
+        arrow.gameObject.SetActive(true);
+        goalFlag.gameObject.SetActive(true);
+
+        _arrowAnimationCoroutine = null;
+    }
+
+    void Update()
+    {
+        if (!upperVirtualCamera.IsLive) return;//上方カメラではないときはなにもしない
+
+        if (arrow.gameObject.activeSelf && _arrowAnimationCoroutine == null)
+        {
+            _arrowAnimationCoroutine = StartCoroutine(ArrowAnimation());
+        }
+    }
+
+    private IEnumerator ArrowAnimation()
+    {
+        Vector2 initialPosition = arrow.anchoredPosition;
+        arrow.DOAnchorPos(initialPosition + Vector2.up * 50f, 0.6f).SetEase(Ease.OutCirc);
+        yield return new WaitForSeconds(0.6f);
+        arrow.DOAnchorPos(initialPosition, 0.6f).SetEase(Ease.InCirc);
+        yield return new WaitForSeconds(0.6f);
+
+        _arrowAnimationCoroutine = null;
     }
 }

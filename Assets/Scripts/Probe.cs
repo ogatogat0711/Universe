@@ -211,7 +211,7 @@ public class Probe : MonoBehaviour
         for (int i = 0; i < _flashTimes; i++)
         {
             //色を変える
-            _materialPropertyBlock.SetColor("_Color", flashColor);
+            _materialPropertyBlock.SetColor("_BaseColor", flashColor);
             _renderer.SetPropertyBlock(_materialPropertyBlock);
             yield return new WaitForSeconds(flashDuration);
             

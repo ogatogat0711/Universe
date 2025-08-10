@@ -342,8 +342,6 @@ public class GameManager : MonoBehaviour
 
             if ((float)probe.fuel / probe.maxFuel < 0.5f && !_hasWarnedForHalfFuel)
             {
-                //navigationForFollowing.ShowMessage("燃料が半分を切りました！\n"
-                //                                +"残量に留意ください！");
                 _hasWarnedForHalfFuel = true; // 半分の燃料を警告したのでフラグを立てる
             }
         }

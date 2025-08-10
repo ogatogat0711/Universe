@@ -12,6 +12,7 @@ public class InformationWindow : MonoBehaviour
     private CelestialBodyData _targetData;
     public static bool isShowing;//表示中かどうかのフラグ
     public Button closeButton;//閉じるボタン
+    public RawImage celestialBodyImage;
     public PlayableDirector appearingDirector;//出現時アニメション
     public PlayableDirector disappearingDirector;//消失時アニメション
 
@@ -25,6 +26,7 @@ public class InformationWindow : MonoBehaviour
         disappearingDirector.Stop();
         infoText.gameObject.SetActive(false);
         closeButton.gameObject.SetActive(false);
+        celestialBodyImage.gameObject.SetActive(false);
     }
 
     public void SetInformation(CelestialBodyData data)
@@ -88,6 +90,7 @@ public class InformationWindow : MonoBehaviour
         
         closeButton.gameObject.SetActive(true);
         infoText.gameObject.SetActive(true);
+        celestialBodyImage.gameObject.SetActive(true);
         isShowing = true;
     }
 
@@ -100,6 +103,7 @@ public class InformationWindow : MonoBehaviour
     {
         infoText.gameObject.SetActive(false);
         closeButton.gameObject.SetActive(false);
+        celestialBodyImage.gameObject.SetActive(false);
         disappearingDirector.Play();
         
         while (disappearingDirector.state == PlayState.Playing)
