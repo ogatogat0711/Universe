@@ -69,6 +69,7 @@ public class ResultManager : MonoBehaviour
         
         gameOverText.gameObject.SetActive(false);
         
+        loadingGauge.fillAmount = 0f;
         loadingBackground.gameObject.SetActive(false);
     }
 
@@ -233,6 +234,8 @@ public class ResultManager : MonoBehaviour
 
     private IEnumerator LoadScene(string sceneName)
     {
+        yield return new WaitForSeconds(1f);
+        
         AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
         
         if (async == null)

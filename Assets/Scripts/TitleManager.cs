@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -7,23 +8,26 @@ using UnityEngine.UI;
 public class TitleManager : MonoBehaviour
 {
     public Image loadingBackground;
-    public Slider loadingSlider;
-    public TMP_Text loadingText;
+    public Sprite[] loadingSprites;
+    public Image loadingGauge;
 
     void Start()
     {
+        Time.timeScale = 1;
+        
+        UnityEngine.Random.InitState(DateTime.Now.Millisecond);
+
+        loadingGauge.fillAmount = 0f;
         loadingBackground.gameObject.SetActive(false);
-        loadingSlider.gameObject.SetActive(false);
-        loadingText.gameObject.SetActive(false);
     }
 
     public void SceneLoad()
     {
+        int spriteIndex = UnityEngine.Random.Range(0, loadingSprites.Length);
+        loadingBackground.sprite = loadingSprites[spriteIndex];
         loadingBackground.gameObject.SetActive(true);
-        loadingText.gameObject.SetActive(true);
-        loadingSlider.gameObject.SetActive(true);
 
-        StartCoroutine(WaitAndLoad(2,"SolarSystem"));
+        StartCoroutine(LoadScene("SolarSystem"));
     }
 
     public void Quit()
@@ -37,21 +41,22 @@ public class TitleManager : MonoBehaviour
     
     IEnumerator LoadScene(string sceneName)
     {
+        yield return new WaitForSeconds(1f);
+        
         AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
+
+        if (async == null)
+        {
+            throw new Exception("Loading scene failed");
+        }
         
         while (!async.isDone)
         {
             float progress = Mathf.Clamp01(async.progress / 0.9f);
-            loadingSlider.value = progress;
+            loadingGauge.fillAmount = progress;
             
             yield return null;
         }
         
-    }
-    
-    IEnumerator WaitAndLoad(int seconds, string sceneName)
-    {
-        yield return new WaitForSeconds(seconds); // 指定された秒数待機
-        yield return LoadScene(sceneName); // シーンをロード
     }
 }

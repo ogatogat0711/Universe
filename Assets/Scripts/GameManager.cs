@@ -72,16 +72,6 @@ public class GameManager : MonoBehaviour
         RunOut,//燃料切れ
         Devastated//損害率100%
     }
-    
-    private Coroutine _showingMessageCoroutine;
-
-    // public InformationWindow infoWindow;
-    // public GameObject guideForInformation;
-
-    // public PlayableDirector toFpsDirector;//FPSカメラに切り替えたときのアニメーション
-    // public PlayableDirector toFollowingDirector;//追従カメラに切り替えたときのアニメーション
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         upperCanvas.gameObject.SetActive(true);
@@ -142,8 +132,6 @@ public class GameManager : MonoBehaviour
         upperNavigationText.gameObject.SetActive(false);
         //navigationForUpper.ShowMessage("マウスを使って予定航路を描きましょう！\n");
         //navigationForFollowing.enabled = false;
-
-        _showingMessageCoroutine = null;
     }
 
     IEnumerator Start()
@@ -279,18 +267,20 @@ public class GameManager : MonoBehaviour
         
         if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && _didDrawOnce)
         {
-            upperNavigationText.text = "右のGoボタンで航行開始です。→\n"
-                                       + "予定消費燃料は"
-                                       + _mover.drawLine.positionCount * probe.fuelConsumptionRatioOfAutoMove
-                                       + "です。";
+            upperNavigationText.text = "このルートの消費燃料理論値・・・"
+                                       + _mover.drawLine.positionCount * probe.fuelConsumptionRatioOfAutoMove;
             
-            ShowMessage(upperNavigationText,false);
+            if(!upperNavigationText.gameObject.activeSelf)
+                upperNavigationText.gameObject.SetActive(true);
         }
         else
         {
             if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) >= 1f && _didDrawOnce)
             {
                 InformationWindow.needToWarn = true;
+                
+                if(upperNavigationText.gameObject.activeSelf)
+                    upperNavigationText.gameObject.SetActive(false);
             }
         }
 
@@ -586,38 +576,6 @@ public class GameManager : MonoBehaviour
         }
         _formerSeconds = _timerSeconds; // 前の秒数を更新
     }
-
     
-    private void ShowMessage(TMP_Text messageField, bool willDisappear, float duration)
-    {
-        //willDisappearがtrueならメッセージを表示してからduration経ってから消すCoroutineを開始
-        if (willDisappear)
-        {
-            messageField.gameObject.SetActive(true);
-
-            if (_showingMessageCoroutine == null)
-                _showingMessageCoroutine = StartCoroutine(HideMessage(messageField, duration));
-            else return;// すでにメッセージを表示している場合は何もしない
-
-        }
-        //falseならメッセージを表示するだけ
-        else if(!willDisappear && !messageField.gameObject.activeSelf)
-        {
-            messageField.gameObject.SetActive(true);
-        }
-    }
-    
-    private void ShowMessage(TMP_Text messageField, bool willDisappear)
-    {
-        if(!willDisappear && !messageField.gameObject.activeSelf)
-            messageField.gameObject.SetActive(true);//falseならメッセージを表示するだけ
-    }
-
-    private IEnumerator HideMessage(TMP_Text messageField, float duration)
-    {
-        yield return new WaitForSeconds(duration);
-        messageField.gameObject.SetActive(false);
-        _showingMessageCoroutine = null;
-    }
 
 }
