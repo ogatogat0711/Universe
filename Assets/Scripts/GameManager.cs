@@ -56,6 +56,8 @@ public class GameManager : MonoBehaviour
     public Image blackBackground;
     // public TMP_Text loadingText;
     // public Slider loadingSlider;
+    
+    public InformationWindow infoWindow;
 
     private Color _originalStartColor;//LineRendererの開始点の元の色
     private Color _originalEndColor;// LineRendererの終了点の元の色
@@ -273,11 +275,10 @@ public class GameManager : MonoBehaviour
         
         if(!_didDrawOnce && _mover.drawLine.positionCount > 1) _didDrawOnce = true;
         
+        if(_didDrawOnce && !startButton.interactable) startButton.interactable = true;//描画後にボタンを有効化
+        
         if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) < 1f && _didDrawOnce)
         {
-            if(!startButton.interactable)
-                startButton.interactable = true;
-
             upperNavigationText.text = "右のGoボタンで航行開始です。→\n"
                                        + "予定消費燃料は"
                                        + _mover.drawLine.positionCount * probe.fuelConsumptionRatioOfAutoMove
@@ -287,13 +288,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if(startButton.interactable)
-                startButton.interactable = false;
             if (Vector3.Distance(probe.transform.position, _mover.drawLine.GetPosition(0)) >= 1f && _didDrawOnce)
             {
-                upperNavigationText.text = "航路の始点があなたの探査機から少し遠いようです。\n"
-                                           + "探査機付近から航路を描いてください。";
-                ShowMessage(upperNavigationText,false);
+                InformationWindow.needToWarn = true;
             }
         }
 
@@ -380,6 +377,13 @@ public class GameManager : MonoBehaviour
     //UIボタンから呼び出されるメソッド
     public void StartMovingOfProbe()
     {
+        if (InformationWindow.needToWarn)
+        {
+            infoWindow.MakeWarning();
+            StartCoroutine(infoWindow.ShowInfoWindow());
+            return;
+        }
+        
         foreach (var cb in _celestialBodies)
         {
             CelestialBody celestialBody = cb.GetComponent<CelestialBody>();

@@ -10,7 +10,7 @@ public class DrawLine : MonoBehaviour
     //public Camera upperCamera;//上方カメラ
     public CinemachineVirtualCameraBase upperVirtualCamera;// 上方カメラの仮想カメラ
     private Camera _mainCamera;//描画用のメインカメラ
-
+    
     private int _positionCount = 0;//点の数
     public int maxPositionCount = 90; // 最大点数
     private float _interval = 1f; // 点の間隔

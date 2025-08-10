@@ -805,6 +805,7 @@ MonoBehaviour:
   gameOverText: {fileID: 223274779}
   clearText: {fileID: 2091872578}
   blackBackground: {fileID: 350590381}
+  infoWindow: {fileID: 1289268782}
   timeScoreInterval: 30
 --- !u!4 &208282608
 Transform:
@@ -6175,10 +6176,10 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 352351737}
-  - {fileID: 1289268781}
   - {fileID: 706560589}
   - {fileID: 570029167}
+  - {fileID: 352351737}
+  - {fileID: 1289268781}
   - {fileID: 133590053}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -11,6 +11,7 @@ public class InformationWindow : MonoBehaviour
     public TMP_Text infoText;
     private CelestialBodyData _targetData;
     public static bool isShowing;//表示中かどうかのフラグ
+    public static bool needToWarn;
     public Button closeButton;//閉じるボタン
     public RawImage celestialBodyImage;
     public PlayableDirector appearingDirector;//出現時アニメション
@@ -27,6 +28,7 @@ public class InformationWindow : MonoBehaviour
         infoText.gameObject.SetActive(false);
         closeButton.gameObject.SetActive(false);
         celestialBodyImage.gameObject.SetActive(false);
+        needToWarn = false;
     }
 
     public void SetInformation(CelestialBodyData data)
@@ -77,6 +79,15 @@ public class InformationWindow : MonoBehaviour
         }
         
         infoText.text = text;
+        infoText.color = Color.white;
+    }
+
+    public void MakeWarning()
+    {
+        infoText.text = "経路のスタートが探査機から離れています。\n"
+                        + "描画しなおしてください。";
+        
+        infoText.color = Color.red;
     }
     
     public IEnumerator ShowInfoWindow()
@@ -90,8 +101,12 @@ public class InformationWindow : MonoBehaviour
         
         closeButton.gameObject.SetActive(true);
         infoText.gameObject.SetActive(true);
-        celestialBodyImage.gameObject.SetActive(true);
+        if (!needToWarn)
+        {
+            celestialBodyImage.gameObject.SetActive(true);
+        }
         isShowing = true;
+        needToWarn = false;
     }
 
     public void OnClickCloseButton()
@@ -99,7 +114,7 @@ public class InformationWindow : MonoBehaviour
         StartCoroutine(HideInfoWindow());
     }
     
-    public IEnumerator HideInfoWindow()
+    private IEnumerator HideInfoWindow()
     {
         infoText.gameObject.SetActive(false);
         closeButton.gameObject.SetActive(false);
