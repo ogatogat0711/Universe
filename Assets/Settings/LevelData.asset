@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f53001c703efa4d8805d4c055c187f, type: 3}
+  m_Name: LevelData
+  m_EditorClassIdentifier: 
+  levelList:
+  - levelId: 0
+    levelName: SolarSystem
+    thumbnail: {fileID: 21300000, guid: 022dfb72136d4c346a85c77215d38e6d, type: 3}
+    isUnlocked: 1
+    sceneName: SolarSystem

@@ -16,7 +16,7 @@ MonoBehaviour:
   - bodyName: Sun
     type: "\u4E3B\u7CFB\u5217\u661F(\u6052\u661F)"
     isSpinOrbital: 0
-    heatIntensity: 250
+    heatIntensity: 100
     orbitalCentralObject: {fileID: 0}
     orbitalRadius: 0
     orbitalCycle: 0

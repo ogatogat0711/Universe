@@ -78,7 +78,7 @@ public class ResultManager : MonoBehaviour
         if (ResultParameters.gameOverType == GameManager.GameOverType.Cleared)//クリア時の処理
         {
             yield return new WaitForSeconds(0.5f);//少し待機
-            blackBackground.rectTransform.DOAnchorPos(new Vector2(-1920f, 0f), 0.8f).SetEase(Ease.OutCubic);//黒背景を左にスライドアウト
+            blackBackground.rectTransform.DOAnchorPos(new Vector2(-Screen.width, 0f), 0.8f).SetEase(Ease.OutCubic);//黒背景を左にスライドアウト
             yield return new WaitForSeconds(1.0f);
             
             int time = ResultParameters.time;
@@ -219,7 +219,7 @@ public class ResultManager : MonoBehaviour
 
     private IEnumerator PanelTransition()
     {
-        resultPanel.rectTransform.DOAnchorPos(new Vector2(-1920f, 0f), 0.8f).SetEase(Ease.OutCubic);//左にスライドアウト
+        resultPanel.rectTransform.DOAnchorPos(new Vector2(-Screen.width, 0f), 0.8f).SetEase(Ease.OutCubic);//左にスライドアウト
         yield return new WaitForSeconds(0.5f);//食い気味に移動
         transitionPanel.rectTransform.DOAnchorPos(new Vector2(0f, 0f),0.8f).SetEase(Ease.OutCubic);//右からスライドイン
     }

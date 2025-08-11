@@ -27,7 +27,7 @@ public class TitleManager : MonoBehaviour
         loadingBackground.sprite = loadingSprites[spriteIndex];
         loadingBackground.gameObject.SetActive(true);
 
-        StartCoroutine(LoadScene("SolarSystem"));
+        StartCoroutine(LoadScene("SelectScene"));
     }
 
     public void Quit()
