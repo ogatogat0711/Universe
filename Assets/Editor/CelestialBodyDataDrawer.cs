@@ -13,6 +13,10 @@ public class CelestialBodyDataDrawer : PropertyDrawer
         {
             lines += 3; //orbitalCentralObject, orbitalRadius, orbitalCycle
         }
+        else
+        {
+            lines += 1; //heatIntensity
+        }
 
         lines++; //gravitationCoefficient
 
@@ -31,6 +35,7 @@ public class CelestialBodyDataDrawer : PropertyDrawer
         var bodyName= property.FindPropertyRelative("bodyName");
         var type = property.FindPropertyRelative("type");
         var isSpinOrbital = property.FindPropertyRelative("isSpinOrbital");
+        var heatIntensity = property.FindPropertyRelative("heatIntensity");
         var orbitalCentralObject = property.FindPropertyRelative("orbitalCentralObject");
         var orbitalRadius = property.FindPropertyRelative("orbitalRadius");
         var orbitalCycle = property.FindPropertyRelative("orbitalCycle");
@@ -55,6 +60,11 @@ public class CelestialBodyDataDrawer : PropertyDrawer
             rect.y += lineHeight + padding;
             
             EditorGUI.PropertyField(rect, orbitalCycle);
+            rect.y += lineHeight + padding;
+        }
+        else
+        {
+            EditorGUI.PropertyField(rect, heatIntensity);
             rect.y += lineHeight + padding;
         }
 

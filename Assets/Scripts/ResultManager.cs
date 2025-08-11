@@ -174,6 +174,7 @@ public class ResultManager : MonoBehaviour
             {
                 GameManager.GameOverType.RunOut => "Your Probe has Run Out of Fuel...\n",
                 GameManager.GameOverType.Devastated => "Your Probe has been Devastated...\n",
+                GameManager.GameOverType.Burned => "Your Probe has been Burned...\n",
                 _ => "Unknown Error"
             };
 

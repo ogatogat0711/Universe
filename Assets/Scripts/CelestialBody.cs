@@ -9,6 +9,8 @@ public class CelestialBody : MonoBehaviour
     public float orbitalRadius = 15f; //公転半径
     public float orbitalCycle = 27f; //公転周期
     private float _orbitalAngle; //公転角度
+    
+    public float heatIntensity;//恒星の熱の強さ
 
     public bool isSpinItself; //自転するかのフラグ
     private float _spinAngle; //自転角度
@@ -22,6 +24,7 @@ public class CelestialBody : MonoBehaviour
 
     public string type; //天体の種類（惑星、衛星、恒星など）
     private CelestialBodyData _celestialData;
+    private float _heatTimer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -39,6 +42,8 @@ public class CelestialBody : MonoBehaviour
         }
 
         _gravitationTarget = gravitationTargetObject.gameObject.GetComponent<Rigidbody>();
+
+        _heatTimer = 0f;
 
     }
 
@@ -59,6 +64,34 @@ public class CelestialBody : MonoBehaviour
 
             Vector3 orbitalCentralPos = orbitalCentralObject.transform.position;
             transform.position = orbitalCentralPos + new Vector3(x, 0, z);
+        }
+        else
+        {
+            float distanceFromProbe = Vector3.Distance(transform.position, gravitationTargetObject.transform.position);
+
+            if (distanceFromProbe <= heatIntensity / 10f)
+            {
+                _heatTimer += Time.deltaTime;
+
+                if (_heatTimer >= 1f)
+                {
+                    float damage = heatIntensity / distanceFromProbe;
+                    if (gravitationTargetObject.damagePercentage + damage >= 100f)
+                    {
+                        gravitationTargetObject.wasBurned = true;
+                    }
+                    gravitationTargetObject.damagePercentage += damage;
+                    gravitationTargetObject.Flash();
+                    gravitationTargetObject.uiFlasher.Flash();
+
+                    _heatTimer = 0f;
+                }
+                
+            }
+            else
+            {
+                _heatTimer = 0f;
+            }
         }
     }
 
@@ -85,6 +118,10 @@ public class CelestialBody : MonoBehaviour
             orbitalCentralObject = data.orbitalCentralObject;
             orbitalRadius = data.orbitalRadius;
             orbitalCycle = data.orbitalCycle;
+        }
+        else
+        {
+            heatIntensity = data.heatIntensity;
         }
 
         type = data.type;

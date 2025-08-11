@@ -8,6 +8,7 @@ public class CelestialBodyData
     public string bodyName;
     public string type;
     public bool isSpinOrbital;
+    public float heatIntensity;
     public GameObject orbitalCentralObject;
     public float orbitalRadius;
     public float orbitalCycle;
@@ -19,6 +20,7 @@ public class CelestialBodyData
         bodyName = "";
         type = "";
         isSpinOrbital = false;
+        heatIntensity = 0f;
         isSpinItself = false;
         gravitationCoefficient = 1.0f;
     }

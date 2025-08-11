@@ -44,6 +44,7 @@ public class Probe : MonoBehaviour
     public UIFlasher uiFlasher;
     public TMP_Text damageText;
     public ParticleSystem leftSpark, rightSpark;
+    public bool wasBurned;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -63,6 +64,8 @@ public class Probe : MonoBehaviour
         
         leftSpark.Stop();
         rightSpark.Stop();
+        
+        wasBurned = false;
     }
 
     // Update is called once per frame
@@ -120,7 +123,7 @@ public class Probe : MonoBehaviour
         {
             if(!damageText.gameObject.activeSelf) damageText.gameObject.SetActive(true);//非表示を戻す
 
-            Color color = Color.Lerp(Color.white, Color.darkRed, damagePercentage / 100f);
+            Color color = Color.Lerp(Color.white, Color.red, damagePercentage / 100f);
             
             damageText.text = "損害率:\n" + damagePercentage.ToString("F1") + "%";
             damageText.color = color; // 色を損害率に応じて変化させる

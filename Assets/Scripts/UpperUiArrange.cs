@@ -51,7 +51,7 @@ public class UpperUiArrange : MonoBehaviour
             _arrowAnimationCoroutine = StartCoroutine(ArrowAnimation());
         }
 
-        if (goalFlag.gameObject.activeSelf)
+        if (goalFlag.gameObject.activeInHierarchy)
         {
             _shineTimer += Time.deltaTime;
 

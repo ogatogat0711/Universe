@@ -70,7 +70,8 @@ public class GameManager : MonoBehaviour
     {
         Cleared,//クリア
         RunOut,//燃料切れ
-        Devastated//損害率100%
+        Devastated,//破壊
+        Burned//消失
     }
     void Awake()
     {
@@ -350,7 +351,15 @@ public class GameManager : MonoBehaviour
         if (probe.damagePercentage >= 100f && isPlaying)//損害率が100%以上になったらゲームオーバー
         {
             isPlaying = false;
-            ResultParameters.gameOverType = GameOverType.Devastated;
+            if (probe.wasBurned)
+            {
+                ResultParameters.gameOverType = GameOverType.Burned;
+            }
+            else
+            {
+                ResultParameters.gameOverType = GameOverType.Devastated;
+            }
+           
             StartCoroutine(GameOver());
         }
 
