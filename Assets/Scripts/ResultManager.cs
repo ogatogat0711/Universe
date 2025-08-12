@@ -17,6 +17,7 @@ public static class ResultParameters
     public static float fuelPercentage;
     public static float damage;
     public static string sceneName;
+    public static int levelId;
 }
 public class ResultManager : MonoBehaviour
 {
@@ -38,6 +39,9 @@ public class ResultManager : MonoBehaviour
     public Image loadingBackground;
     public Sprite[] loadingSprites;
     public Image loadingGauge;
+    public TMP_Text highScoreText;
+    public ShinyEffectForUGUI shine;
+    private float _shineTimer;
 
     void Awake()
     {
@@ -71,6 +75,9 @@ public class ResultManager : MonoBehaviour
         
         loadingGauge.fillAmount = 0f;
         loadingBackground.gameObject.SetActive(false);
+        
+        highScoreText.gameObject.SetActive(false);
+        _shineTimer = 0f;
     }
 
     IEnumerator Start()
@@ -156,6 +163,13 @@ public class ResultManager : MonoBehaviour
                 rateText.text = "D";
                 rateText.color = Color.white;
             }
+
+            int highScore = PlayerPrefs.GetInt("HighScore" + ResultParameters.levelId, 0);
+            if (resultScore > highScore)
+            {
+                highScoreText.gameObject.SetActive(true);
+                PlayerPrefs.SetInt("HighScore" + ResultParameters.levelId, resultScore);//ハイスコアを保存
+            }
             
             rateText.gameObject.SetActive(true);
             underlineImage.gameObject.SetActive(true);
@@ -166,7 +180,7 @@ public class ResultManager : MonoBehaviour
         else
         {
             yield return new WaitForSeconds(0.5f);//少し待機
-            blackBackground.rectTransform.DOAnchorPos(new Vector2(-1920f, 0f), 0.8f).SetEase(Ease.OutCubic);//黒背景を左にスライドアウト
+            blackBackground.rectTransform.DOAnchorPos(new Vector2(-Screen.width, 0f), 0.8f).SetEase(Ease.OutCubic);//黒背景を左にスライドアウト
             yield return StartCoroutine(PanelTransition());//一枚目のパネルはスライドアウト、二枚目のパネルはスライドイン
             
             gameOverText.gameObject.SetActive(true);
@@ -183,12 +197,22 @@ public class ResultManager : MonoBehaviour
         
     }
 
-    // private void Update()
-    // {
-    //     if (rateText.text == "B" || rateText.text == "C" || rateText.text == "D") return;//Bランク以下は何もしない
-    //     if (!rateText.gameObject.activeSelf) return; //レート非表示の時も何もしない
-    //     
-    // }
+    private void Update()
+    {
+        if (highScoreText.gameObject.activeInHierarchy)
+        {
+            _shineTimer += Time.deltaTime;
+
+            if (_shineTimer >= 3f)
+            {
+                shine.Play(1f);
+            }
+        }
+        else
+        {
+            _shineTimer = 0f;
+        }
+    }
 
     private void CountUp(int targetScore, TMP_Text targetScoreText, float duration)
     {
@@ -249,5 +273,14 @@ public class ResultManager : MonoBehaviour
             loadingGauge.fillAmount = Mathf.Clamp01(async.progress / 0.9f);
             yield return null;
         }
+    }
+
+    public void GoToSelectStage()
+    {
+        int spriteIndex = UnityEngine.Random.Range(0, loadingSprites.Length);
+        loadingBackground.sprite = loadingSprites[spriteIndex];
+        loadingBackground.gameObject.SetActive(true);
+
+        StartCoroutine(LoadScene("SelectScene"));
     }
 }

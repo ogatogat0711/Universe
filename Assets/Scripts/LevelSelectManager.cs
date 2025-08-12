@@ -24,6 +24,10 @@ public class LevelSelectManager : MonoBehaviour
     public Image loadingBackground;
     public Sprite[] loadingSprites;
     public Image loadingGauge;
+    public Button backToTitleButton;
+    private bool _isTransferring;
+    public Image windowPanel;
+    private bool _isWindowOpen;
 
     void Awake()
     {
@@ -72,8 +76,9 @@ public class LevelSelectManager : MonoBehaviour
 
             string sceneName = _levels[i].sceneName;
             int index = i;
+            int levelId = _levels[i].levelId;
             _levelPanels[i].gameObject.GetComponentInChildren<Button>().onClick
-                .AddListener(() => OnStageButtonClicked(sceneName, index));
+                .AddListener(() => OnStageButtonClicked(sceneName, index, levelId));
 
             if (_levels[i].thumbnail != null)
             {
@@ -81,7 +86,11 @@ public class LevelSelectManager : MonoBehaviour
                 thumbnail.sprite = _levels[i].thumbnail;
             }
 
-            _levelPanels[i].GetComponentInChildren<TMP_Text>().text = "Stage " + _levels[i].levelId;
+            string text = "Stage " + _levels[i].levelId;
+            int highScore = PlayerPrefs.GetInt("HighScore" + _levels[i].levelId, 0);
+            text += "\nHigh Score: " + highScore;
+
+            _levelPanels[i].GetComponentInChildren<TMP_Text>().text = text;
 
             _levelPanels[i].name = "LevelPanel" + i;
         }
@@ -92,6 +101,10 @@ public class LevelSelectManager : MonoBehaviour
         _backButton.interactable = false;
         
         _containerPanels[_currentContainerIndex].gameObject.SetActive(true);
+
+        _isTransferring = false;
+
+        _isWindowOpen = false;
     }
 
     IEnumerator Start()
@@ -115,6 +128,8 @@ public class LevelSelectManager : MonoBehaviour
             _backButton.interactable = false;
         }
         
+        
+        backToTitleButton.interactable = !(_isTransferring || _isWindowOpen);
         // Debug.Log(_currentContainerIndex);
     }
 
@@ -134,17 +149,19 @@ public class LevelSelectManager : MonoBehaviour
         // SetButtons(_currentContainerIndex);
     }
 
-    private void OnStageButtonClicked(string sceneName, int panelIndex)
+    private void OnStageButtonClicked(string sceneName, int panelIndex, int levelId)
     {
         int spriteIndex = UnityEngine.Random.Range(0, loadingSprites.Length);
         loadingBackground.sprite = loadingSprites[spriteIndex];
+
+        ResultParameters.levelId = levelId;
         
-        StartCoroutine(LoadScene(sceneName, panelIndex));
+        StartCoroutine(LoadStageScene(sceneName, panelIndex));
     }
 
-    private IEnumerator LoadScene(string sceneName, int panelIndex)
+    private IEnumerator LoadStageScene(string sceneName, int panelIndex)
     {
-        for (int i = 0; i < _levels.Count; i++)
+        for (int i = 0; i < _levelPanels.Length; i++)
         {
             if (i != panelIndex)
             {
@@ -179,6 +196,7 @@ public class LevelSelectManager : MonoBehaviour
         Image currentPanel = _containerPanels[_currentContainerIndex];
         Image nextPanel = _containerPanels[transferPanelIndex];
         nextPanel.gameObject.SetActive(true);
+        _isTransferring = true;
 
         int transitionCoefficient = _currentContainerIndex - transferPanelIndex;//Nextなら-1, Backなら+1
         
@@ -190,6 +208,7 @@ public class LevelSelectManager : MonoBehaviour
         currentPanel.gameObject.SetActive(false);
         
         SetButtons(_currentContainerIndex);
+        _isTransferring = false;
     }
 
     private void SetButtons(int containerIndex)
@@ -207,5 +226,57 @@ public class LevelSelectManager : MonoBehaviour
 
         _nextButton.interactable = true;
         _backButton.interactable = true;
+    }
+
+    public void OnBackToTitleButtonClicked()
+    {
+        StartCoroutine(AppearWindow());
+    }
+
+    private IEnumerator AppearWindow()
+    {
+        _isWindowOpen = true;
+        windowPanel.rectTransform.DOAnchorPosY(0f, 0.5f).SetEase(Ease.OutCubic);
+        yield return new WaitForSeconds(0.5f);
+    }
+
+    public void OnCloseButtonClicked()
+    {
+        StartCoroutine(DisAppearWindow());
+        
+    }
+
+    private IEnumerator DisAppearWindow()
+    {
+        windowPanel.rectTransform.DOAnchorPosY(Screen.height, 0.5f).SetEase(Ease.OutCubic);
+        yield return new WaitForSeconds(0.5f);
+
+        _isWindowOpen = false;
+    }
+
+    public void BackToTitle()
+    {
+        int spriteIndex = UnityEngine.Random.Range(0, loadingSprites.Length);
+        loadingBackground.sprite = loadingSprites[spriteIndex];
+        loadingBackground.gameObject.SetActive(true);
+
+
+        StartCoroutine(LoadTitleScene());
+    }
+
+    private IEnumerator LoadTitleScene()
+    {
+        AsyncOperation async = SceneManager.LoadSceneAsync("Title Scene");
+        
+        if (async == null)
+        {
+            throw new Exception("Failed to load scene");
+        }
+
+        while (!async.isDone)
+        {
+            loadingGauge.fillAmount = Mathf.Clamp01(async.progress / 0.9f);
+            yield return null;
+        }
     }
 }
