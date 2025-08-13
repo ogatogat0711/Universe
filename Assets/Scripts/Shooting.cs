@@ -10,7 +10,7 @@ public class Shooting : MonoBehaviour
    public Camera mainCamera;
    public Transform shootRoot; // 射撃のルート位置
    public Transform shotParent; // 射撃の親オブジェクト
-   private float _offsetForRoot = 0.75f;
+   // private float _offsetForRoot = 0.75f;
    private float _shootingTimer;
    public TMP_Text shootingInfo;
    private ShotData _shotData;
@@ -26,7 +26,7 @@ public class Shooting : MonoBehaviour
    void FixedUpdate()
    {
       Vector3 forward = fpsCamera.transform.forward;
-      shootRoot.position = probe.transform.position + forward * _offsetForRoot; // 射撃位置をProbeの位置から前方に調整
+      // shootRoot.position = probe.transform.position + forward * _offsetForRoot; // 射撃位置をProbeの位置から前方に調整
       shootRoot.rotation = Quaternion.LookRotation(forward); // 射撃位置の向きをカメラの前方に合わせる
       
       if (fpsCamera.IsLive && Input.GetMouseButton(0)) // 左クリックで射撃

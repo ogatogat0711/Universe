@@ -6,7 +6,7 @@ public class Shot : MonoBehaviour
     public int speed;
     public int attack;
     private Probe _probe;
-    public int maxDistance;
+    private readonly int _maxDistance = 30;
     public float shotInterval;
     public int fuelConsumptionRatioOfShot = 2;
 
@@ -21,7 +21,7 @@ public class Shot : MonoBehaviour
     
     void Update()
     {
-        if (Vector3.Distance(transform.position, _probe.transform.position) > maxDistance)
+        if (Vector3.Distance(transform.position, _probe.transform.position) > _maxDistance)
         {
             Destroy(gameObject);
         }
