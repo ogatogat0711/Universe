@@ -28,6 +28,7 @@ public class LevelSelectManager : MonoBehaviour
     private bool _isTransferring;
     public Image windowPanel;
     private bool _isWindowOpen;
+    public Button customizeButton;
 
     void Awake()
     {
@@ -56,6 +57,12 @@ public class LevelSelectManager : MonoBehaviour
             _containerPanels[i].name = "ContainerPanel" + (i + 1);
         }
         _containerPanels[0].rectTransform.anchoredPosition = new Vector2(0f, 0f);//一個目は真ん中に設置
+
+        float padding = Screen.width * 0.04f;//左右の空白はスクリーン幅の4％
+        float width = (Screen.width - padding * 2f) / 3f;
+        float height = Screen.height / 2f;
+        // Debug.Log("width: " + width + "height: " + height);
+        levelPanelPrefab.rectTransform.rect.Set(0f, 0f, width, height);
 
         for (int i = 0; i < _levels.Count; i++)
         {
@@ -104,6 +111,8 @@ public class LevelSelectManager : MonoBehaviour
 
         _isTransferring = false;
 
+        windowPanel.rectTransform.anchoredPosition = new Vector2(0f, Screen.height);
+
         _isWindowOpen = false;
     }
 
@@ -130,6 +139,7 @@ public class LevelSelectManager : MonoBehaviour
         
         
         backToTitleButton.interactable = !(_isTransferring || _isWindowOpen);
+        customizeButton.interactable = !(_isTransferring || _isWindowOpen);
         // Debug.Log(_currentContainerIndex);
     }
 
@@ -261,12 +271,21 @@ public class LevelSelectManager : MonoBehaviour
         loadingBackground.gameObject.SetActive(true);
 
 
-        StartCoroutine(LoadTitleScene());
+        StartCoroutine(LoadScene("Title Scene"));
+    }
+    
+    public void GoToCustomize()
+    {
+        int spriteIndex = UnityEngine.Random.Range(0, loadingSprites.Length);
+        loadingBackground.sprite = loadingSprites[spriteIndex];
+        loadingBackground.gameObject.SetActive(true);
+        
+        StartCoroutine(LoadScene("CustomizeScene"));
     }
 
-    private IEnumerator LoadTitleScene()
+    private IEnumerator LoadScene(string sceneName)
     {
-        AsyncOperation async = SceneManager.LoadSceneAsync("Title Scene");
+        AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
         
         if (async == null)
         {

@@ -126,9 +126,10 @@ MonoBehaviour:
   orbitalCentralObject: {fileID: 0}
   orbitalRadius: 25
   orbitalCycle: 27
+  heatIntensity: 0
   isSpinItself: 1
   simulationSpeed: 0.01
   isGravitation: 1
   gravitationCoefficient: 10
-  gravitationTargetObject: {fileID: 0}
+  gravitationTargetObject: {fileID: 5609619089402584370, guid: d4d38ffc4510fc94ab11f75bc575364a, type: 3}
   type: 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Shooting : MonoBehaviour
 {
-   public Shot shotPrefab;
+   public GameObject shotPrefab;
    public Probe probe;
    public CinemachineVirtualCameraBase fpsCamera;
    public Camera mainCamera;
@@ -13,11 +13,14 @@ public class Shooting : MonoBehaviour
    private float _offsetForRoot = 0.75f;
    private float _shootingTimer;
    public TMP_Text shootingInfo;
+   private ShotData _shotData;
 
    void Start()
    {
+      _shotData = probe.shotDataList.FindShotDataById(probe.shotID);
+      shotPrefab = _shotData.shotPrefab;
       _shootingTimer = 0f;
-      shootingInfo.text = ": 射撃(消費燃料: " + shotPrefab.fuelConsumptionRatioOfShot + ")";
+      shootingInfo.text = ": 射撃(消費燃料: " + _shotData.fuelConsumptionOfShot + ")";
    }
    
    void FixedUpdate()
@@ -30,7 +33,7 @@ public class Shooting : MonoBehaviour
       {
          _shootingTimer += Time.fixedDeltaTime;
 
-         if (_shootingTimer >= shotPrefab.shotInterval) // 射撃間隔を確認
+         if (_shootingTimer >= _shotData.shotInterval) // 射撃間隔を確認
          {
             Shoot();
             _shootingTimer = 0f; // タイマーリセット
@@ -38,7 +41,7 @@ public class Shooting : MonoBehaviour
       }
       else
       {
-         _shootingTimer = shotPrefab.shotInterval; //すぐに打てるようにしておく
+         _shootingTimer = _shotData.shotInterval; //すぐに打てるようにしておく
       }
    }
 
@@ -52,8 +55,10 @@ public class Shooting : MonoBehaviour
 
       Quaternion rotation =
          Quaternion.LookRotation(direction) * Quaternion.AngleAxis(90, Vector3.right); //shotの向きをカメラの方向に合わせる
-      Shot shot = Instantiate(shotPrefab, shootRoot.position, rotation);
+      GameObject shotObject = Instantiate(shotPrefab, shootRoot.position, rotation);
+      Shot shot = shotObject.AddComponent<Shot>();
       shot.transform.SetParent(shotParent); // 射撃の親オブジェクトに設定
+      shot.InitShot(_shotData);
       Rigidbody rb = shot.GetComponent<Rigidbody>();
       rb.AddForce(direction * shot.speed, ForceMode.Impulse);
       probe.fuel-= shot.fuelConsumptionRatioOfShot; //燃料消費

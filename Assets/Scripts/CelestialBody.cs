@@ -97,7 +97,7 @@ public class CelestialBody : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isGravitation && !gravitationTargetObject.fpsCamera.IsLive)
+        if (isGravitation)
         {
             Vector3 gravityDirection = transform.position - _gravitationTarget.transform.position; //万有引力の作用方向のベクトル
             float distanceSquared = Mathf.Pow(gravityDirection.magnitude, 2.0f); //ベクトルの大きさの2乗

@@ -1,16 +1,11 @@
 using System;
 using System.Collections;
-using System.Net.Sockets;
+using System.IO;
 using DG.Tweening;
 using TMPro;
 using Unity.Cinemachine;
-using Unity.Properties;
-//using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -104,9 +99,31 @@ public class GameManager : MonoBehaviour
                 celestialBody.wasSetSpinOrbital = true;//公転するという情報は保持したまま
             }
         }
+        _mover = probe.GetComponent<MoveAlongLine>();
+        string probeData = PlayerPrefs.GetString("probeData", "");
+
+        if (probeData == "")
+        {
+            throw new Exception("データがないよ");
+        }
+        
+        string[] setData = probeData.Split('|');
+
+        if (setData.Length != 6)
+        {
+            throw new InvalidDataException();
+        }
+
+        probe.maxFuel = int.Parse(setData[0]);
+        probe.speed = float.Parse(setData[1]);
+        probe.fuelConsumptionRatioOfManipulation = int.Parse(setData[2]);
+        _mover.moveSpeed = int.Parse(setData[3]);
+        probe.fuelConsumptionRatioOfAutoMove = int.Parse(setData[4]);
+        probe.shotID = int.Parse(setData[5]);
+        
         probe.canMove = false;//最初は移動を無効化
         
-        _mover = probe.GetComponent<MoveAlongLine>();
+        
         _didDrawOnce = false;
         isPlaying = true;
         _hasWarnedForHalfFuel = false;
@@ -130,7 +147,8 @@ public class GameManager : MonoBehaviour
         // toFollowingDirector.Stop();
         
         //navigationForUpper.navigationText.text = "";
-        upperNavigationText.gameObject.SetActive(false);
+        upperNavigationText.gameObject.SetActive(true);
+        upperNavigationText.text = "";
         //navigationForUpper.ShowMessage("マウスを使って予定航路を描きましょう！\n");
         //navigationForFollowing.enabled = false;
     }

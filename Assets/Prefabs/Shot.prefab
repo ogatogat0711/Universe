@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6097067194307476290}
   - component: {fileID: 1044637284181549536}
   - component: {fileID: 9185087785753387114}
-  - component: {fileID: 7768848812797878448}
   - component: {fileID: 6187098304234272316}
   m_Layer: 0
   m_Name: Shot
@@ -113,22 +112,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &7768848812797878448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3229425994266745014}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 948c3984499a0074eba260bf2c87ed24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 15
-  attack: 5
-  maxDistance: 20
-  shotInterval: 0.2
 --- !u!54 &6187098304234272316
 Rigidbody:
   m_ObjectHideFlags: 0

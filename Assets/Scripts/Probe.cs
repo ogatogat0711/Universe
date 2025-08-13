@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
+using System.IO;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.Serialization;
 
 public class Probe : MonoBehaviour
@@ -45,8 +48,9 @@ public class Probe : MonoBehaviour
     public TMP_Text damageText;
     public ParticleSystem leftSpark, rightSpark;
     public bool wasBurned;
+    public int shotID;
+    public ShotDataList shotDataList;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         fuel = maxFuel;
