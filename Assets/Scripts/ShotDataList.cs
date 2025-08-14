@@ -6,11 +6,17 @@ using UnityEngine;
 public class ShotData
 {
     public int shotID;
+    public string shotName;
     public GameObject shotPrefab;
     public int speed;
     public int attack;
     public float shotInterval;
     public int fuelConsumptionOfShot;
+    public bool chargeable;
+    public float chargeTime;
+    public int chargeableBullets;
+    public bool isUnlock;
+    public int price;
 }
 
 [CreateAssetMenu(fileName = "ShotDataList", menuName = "Scriptable Objects/ShotDataList")]

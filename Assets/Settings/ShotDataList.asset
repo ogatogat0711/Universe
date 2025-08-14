@@ -14,8 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shotDataList:
   - shotID: 0
+    shotName: ShotGun Standard "Ignite"
     shotPrefab: {fileID: 3229425994266745014, guid: 29a1d30cc4fe21f44af28d84b5c4932f, type: 3}
     speed: 15
     attack: 5
     shotInterval: 0.2
     fuelConsumptionOfShot: 2
+    chargeable: 0
+    chargeTime: 0
+    chargeableBullets: 0
+    isUnlock: 1
+    price: 0
+  - shotID: 1
+    shotName: ShotGun QuickStyle "Impact"
+    shotPrefab: {fileID: 3229425994266745014, guid: 61cdfa9ab9cc31244a715cecae6c15b7, type: 3}
+    speed: 20
+    attack: 2
+    shotInterval: 0.1
+    fuelConsumptionOfShot: 4
+    chargeable: 0
+    chargeTime: 0
+    chargeableBullets: 0
+    isUnlock: 0
+    price: 5000

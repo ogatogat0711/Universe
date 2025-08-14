@@ -9,6 +9,10 @@ public class Shot : MonoBehaviour
     private readonly int _maxDistance = 30;
     public float shotInterval;
     public int fuelConsumptionRatioOfShot = 2;
+    public string shotName;
+    public bool chargeable;
+    public float chargeTime;
+    public int chargeableBullets;
 
     void Start()
     {
@@ -33,5 +37,9 @@ public class Shot : MonoBehaviour
         attack = shotData.attack;
         shotInterval = shotData.shotInterval;
         fuelConsumptionRatioOfShot = shotData.fuelConsumptionOfShot;
+        shotName = shotData.shotName;
+        chargeable = shotData.chargeable;
+        chargeableBullets = shotData.chargeableBullets;
+        chargeTime = shotData.chargeTime;
     }
 }
