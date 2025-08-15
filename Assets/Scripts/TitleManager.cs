@@ -56,6 +56,7 @@ public class TitleManager : MonoBehaviour
             string initialProbeData = "500|300|3|100|1|0";//データの初期化
             //初期燃料|操作時速度|操作時消費燃料|自動時速度|自動時消費燃料|ShotID (要素数6)
             PlayerPrefs.SetString("probeData", initialProbeData);
+            PlayerPrefs.SetInt("gold", 0);//goldもここで初期化
         }
 
         StartCoroutine(LoadScene("SelectScene"));
