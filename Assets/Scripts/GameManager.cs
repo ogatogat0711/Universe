@@ -109,17 +109,24 @@ public class GameManager : MonoBehaviour
         
         string[] setData = probeData.Split('|');
 
-        if (setData.Length != 6)
+        if (setData.Length != 4)
         {
             throw new InvalidDataException();
         }
 
-        probe.maxFuel = int.Parse(setData[0]);
-        probe.speed = float.Parse(setData[1]);
-        probe.fuelConsumptionRatioOfManipulation = int.Parse(setData[2]);
-        _mover.moveSpeed = int.Parse(setData[3]);
-        probe.fuelConsumptionRatioOfAutoMove = int.Parse(setData[4]);
-        probe.shotID = int.Parse(setData[5]);
+        int maxFuelLevel = int.Parse(setData[0]);
+        int speedLevel = int.Parse(setData[1]);
+        int fuelRatioLevel = int.Parse(setData[2]);
+
+        probe.maxFuel = 20000 * Math.Max(2 * maxFuelLevel - speedLevel + 1, 1) / 20;//燃料レベルと速度レベルで計算される20段階で決定する(燃料レベルの方が寄与率が高い)
+
+        probe.speed = 10f + Math.Max(2 * speedLevel - fuelRatioLevel + 1, 0) * 2f;//速度レベルと燃費レベルで決定する(速度レベルの方が寄与率が高い)
+        _mover.moveSpeed = probe.speed * 5;//自動航行は手動の5倍(これでも手動の方が速い)
+
+        probe.fuelConsumptionRatioOfManipulation = Math.Max(maxFuelLevel + speedLevel - fuelRatioLevel + 1, 1) * 3;//それぞれのレベルで決定する、燃費レベルは減算
+        probe.fuelConsumptionRatioOfAutoMove = Math.Max(maxFuelLevel - fuelRatioLevel * 2, 1);//燃料レベルは寄与せず、燃費レベルの寄与率が高い。0以下の場合は1に集約
+        
+        probe.shotID = int.Parse(setData[3]);
         
         probe.canMove = false;//最初は移動を無効化
         

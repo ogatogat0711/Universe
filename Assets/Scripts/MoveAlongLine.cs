@@ -96,7 +96,7 @@ public class MoveAlongLine : MonoBehaviour
             
             Vector3 target = drawLine.GetPosition(currentIndex + 1);//向かう先の座標
             Vector3 direction = (target - transform.position).normalized; //向かう方向
-            direction *= Time.fixedDeltaTime;
+            // direction *= Time.fixedDeltaTime;
             
             _probe.ResetInertia();//Probeの慣性をリセット
             _rigidbody.AddForce(direction * moveSpeed);

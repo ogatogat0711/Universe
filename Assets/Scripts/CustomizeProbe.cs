@@ -28,6 +28,9 @@ public class CustomizeProbe : MonoBehaviour
     public Sprite[] loadingSprites;
     public Image loadingGauge;
     public TMP_Text gold, price;
+    public Image performanceInfo;
+    public PerformanceLevelGauge fuelLevel, speedLevel, fuelRatioLevel;
+    public FillGauge fuelGauge,speedGauge,fuelRatioGauge;
 
     void Start()
     {
@@ -46,7 +49,7 @@ public class CustomizeProbe : MonoBehaviour
         }
 
         _setData = probeData.Split('|');
-        if (_setData.Length != 6)
+        if (_setData.Length != 4)
         {
             throw new InvalidDataException("probeDataの長さが不正です");
         }
@@ -248,12 +251,18 @@ public class CustomizeProbe : MonoBehaviour
 
     public void OnPerformanceButtonClicked()
     {
+        InitPerformanceInfo();
+        
+        fuelLevel.InitLevelGauge(int.Parse(_setData[0]));
+        speedLevel.InitLevelGauge(int.Parse(_setData[1]));
+        fuelRatioLevel.InitLevelGauge(int.Parse(_setData[2]));
+        
         StartCoroutine(TransitionPanel(performanceWindow));
     }
 
     public void OnShotButtonClicked()
     {
-        InitShotInfo(int.Parse(_setData[5]), currentShotInfo);
+        InitShotInfo(int.Parse(_setData[3]), currentShotInfo);
         tempShotInfo.gameObject.SetActive(false);
         setShotButton.interactable = false;
         InitShotMenu();
@@ -299,15 +308,17 @@ public class CustomizeProbe : MonoBehaviour
                         gold.text = goldValue.ToString();
                         PlayerPrefs.SetInt("gold", goldValue);
                         StartCoroutine(FadeOutPrice());
+                        
                         string shotUnlockData = PlayerPrefs.GetString("shotUnlockData", "");
                         StringBuilder sb = new StringBuilder(shotUnlockData);
                         sb[shotID] = '1';
                         shotUnlockData = sb.ToString();
+                        
                         PlayerPrefs.SetString("shotUnlockData", shotUnlockData);
                         ShotUnlock(shotUnlockData);
                         InitShotMenu();
                     }
-                    _setData[5] = shotID.ToString();//shotIDを変更
+                    _setData[3] = shotID.ToString();//shotIDを変更
                     string probeData = ConcatProbeData();//probeDataを構成
                     PlayerPrefs.SetString("probeData", probeData);
                     StartCoroutine(DisappearWindow(shotDialogueWindow));
@@ -363,6 +374,23 @@ public class CustomizeProbe : MonoBehaviour
         }
         
         return dataString;
+    }
+
+    private void InitPerformanceInfo()
+    {
+        int maxFuelLevelValue = int.Parse(_setData[0]);
+        int speedLevelValue = int.Parse(_setData[1]);
+        int fuelRatioLevelValue = int.Parse(_setData[2]);
+
+        TMP_Text[] perfInfo = performanceInfo.GetComponentsInChildren<TMP_Text>();
+
+        float fuelFill = (float)Math.Max(2 * maxFuelLevelValue - speedLevelValue + 1, 1) / 20;
+        float speedFill = (float)Math.Max(2 * speedLevelValue - fuelRatioLevelValue + 1, 1) / 20;
+        float fuelRatioFill = (float)Math.Max(maxFuelLevelValue + speedLevelValue - fuelRatioLevelValue + 1, 1) / 20;
+        
+        fuelGauge.SetFill(fuelFill,0.3f);
+        speedGauge.SetFill(speedFill,0f);
+        fuelRatioGauge.SetFill(fuelRatioFill, 0f);
     }
 
     public void OnBackToSelectButtonClicked()

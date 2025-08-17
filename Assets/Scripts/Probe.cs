@@ -142,7 +142,7 @@ public class Probe : MonoBehaviour
             //回転中は操作できない
             Vector3 cameraDirection= followingVirtualCamera.transform.forward;//カメラの見ている方向からXZ平面の単位ベクトルを取得
             Vector3 moveDirection = cameraDirection * _vertical + transform.right * _horizontal;//キー入力から移動方向を決定
-            moveDirection *= Time.fixedDeltaTime;
+            // moveDirection *= Time.fixedDeltaTime;
 
             if (_vertical != 0f || _horizontal != 0f)
             {
