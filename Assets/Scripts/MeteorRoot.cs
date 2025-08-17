@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using Random = System.Random;
@@ -21,6 +22,7 @@ public class MeteorRoot : MonoBehaviour
     public Transform meteorParent;
     public bool isSpawning;
     public WarningIndicator warningIndicator;
+    public TMP_Text warningText;
 
     void Start()
     {
@@ -28,6 +30,7 @@ public class MeteorRoot : MonoBehaviour
         _positionTransferTimer = 0f;
         isSpawning = false;
         UnityEngine.Random.InitState(DateTime.Now.Millisecond);
+        warningText.gameObject.SetActive(false);
     }
 
     void FixedUpdate()
@@ -63,6 +66,8 @@ public class MeteorRoot : MonoBehaviour
                 _spawnTimer = 0f;//生成タイマーリセット
             }
         }
+        
+        warningText.gameObject.SetActive(isSpawning);
     }
 
     IEnumerator SpawnMeteors(int count, Vector3 direction)

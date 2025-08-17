@@ -57,6 +57,7 @@ public class TitleManager : MonoBehaviour
             //燃料(1~10)|速度(1~10)|消費燃料(1~10)|ShotID (要素数6)
             PlayerPrefs.SetString("probeData", initialProbeData);
             PlayerPrefs.SetInt("gold", 0);//goldもここで初期化
+            PlayerPrefs.SetInt("stageUnlockInfo", 0); //ステージのアンロック情報もここで初期化、アンロックされたstageの最終番号
         }
 
         StartCoroutine(LoadScene("SelectScene"));

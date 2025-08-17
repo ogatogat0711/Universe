@@ -64,6 +64,8 @@ public class LevelSelectManager : MonoBehaviour
         // Debug.Log("width: " + width + "height: " + height);
         levelPanelPrefab.rectTransform.rect.Set(0f, 0f, width, height);
 
+        int stageUnlockInfo = PlayerPrefs.GetInt("stageUnlockInfo", 0);
+
         for (int i = 0; i < _levels.Count; i++)
         {
             int pageNumber = i / 3;
@@ -84,8 +86,13 @@ public class LevelSelectManager : MonoBehaviour
             string sceneName = _levels[i].sceneName;
             int index = i;
             int levelId = _levels[i].levelId;
-            _levelPanels[i].gameObject.GetComponentInChildren<Button>().onClick
-                .AddListener(() => OnStageButtonClicked(sceneName, index, levelId));
+            Button button = _levelPanels[index].GetComponentInChildren<Button>();
+            button.onClick.AddListener(() => OnStageButtonClicked(sceneName, index, levelId));
+            button.interactable = (i <= stageUnlockInfo);
+
+            RawImage rawImage = _levelPanels[i].GetComponentInChildren<RawImage>();
+            Color originalColor = rawImage.color;
+            rawImage.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
 
             if (_levels[i].thumbnail != null)
             {
@@ -123,6 +130,11 @@ public class LevelSelectManager : MonoBehaviour
         blackBackground.rectTransform.DOAnchorPosX(-Screen.width, 0.5f).SetEase(Ease.OutCubic);
         yield return new WaitForSeconds(0.5f);
         blackBackground.gameObject.SetActive(false);
+    }
+
+    private IEnumerator CheckUnlock()
+    {
+        yield return null;
     }
 
     void Update()
